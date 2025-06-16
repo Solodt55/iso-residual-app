@@ -45,36 +45,29 @@ const AddAgent = ({organizationID, authToken}) => {
           'Authorization': `Bearer ${iso_token}`
         },
         body: JSON.stringify(agent)
-      }).catch(error => {
-        console.error('Network error details:', {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        });
-        throw new Error(`Network error: ${error.message}`);
       });
 
-      console.log('Response status:', userResponse.status);
-      console.log('Response headers:', Object.fromEntries(userResponse.headers.entries()));
-
+      // Try to parse the response regardless of status
       let userData;
       try {
-        userData = await userResponse.json();
-        console.log('Parsed response data:', userData);
+        const text = await userResponse.text(); // Get response as text first
+        console.log('Raw response:', text);
+        userData = JSON.parse(text); // Try to parse as JSON
       } catch (error) {
         console.error('Error parsing response:', error);
         throw new Error('Invalid response from server');
       }
 
+      // Handle Laravel validation errors (422 status code)
+      if (userResponse.status === 422 && userData.errors) {
+        console.log('Validation errors:', userData.errors);
+        setValidationErrors(userData.errors);
+        return;
+      }
+
+      // Handle other error responses
       if (!userResponse.ok) {
         console.log('Response not OK, status:', userResponse.status);
-        // Handle Laravel validation errors
-        if (userData.errors) {
-          console.log('Validation errors:', userData.errors);
-          setValidationErrors(userData.errors);
-          return;
-        }
-        // Handle other error messages
         if (userData.message) {
           console.log('Error message:', userData.message);
           setValidationErrors({ general: [userData.message] });
