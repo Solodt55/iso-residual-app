@@ -40,21 +40,29 @@ const AddAgent = ({organizationID, authToken}) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${iso_token}`
         },
-
         body: JSON.stringify(agent)
       });
 
-      const userData = await userResponse.json();
-      console.log('userData',userData);
-      // console.log('userData',userData);
+      let userData;
+      try {
+        userData = await userResponse.json();
+      } catch (error) {
+        console.error('Error parsing response:', error);
+        throw new Error('Invalid response from server');
+      }
 
       if (!userResponse.ok) {
-        // Handle validation errors
+        // Handle Laravel validation errors
         if (userData.errors) {
           setValidationErrors(userData.errors);
-          return; // Stop here if there are validation errors
+          return;
         }
-        throw new Error(userData.message || 'Failed to create user');
+        // Handle other error messages
+        if (userData.message) {
+          setValidationErrors({ general: [userData.message] });
+          return;
+        }
+        throw new Error('Failed to create user');
       }
 
       const userId = userData?.data?.id;
