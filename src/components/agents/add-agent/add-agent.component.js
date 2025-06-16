@@ -33,6 +33,10 @@ const AddAgent = ({organizationID, authToken}) => {
     setValidationErrors({}); // Clear previous errors
     
     try {
+      console.log('Starting user creation request...');
+      console.log('Request URL:', `${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`);
+      console.log('Request payload:', agent);
+      
       // First create the user
       const userResponse = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
         method: 'POST',
@@ -41,24 +45,38 @@ const AddAgent = ({organizationID, authToken}) => {
           'Authorization': `Bearer ${iso_token}`
         },
         body: JSON.stringify(agent)
+      }).catch(error => {
+        console.error('Network error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+        throw new Error(`Network error: ${error.message}`);
       });
+
+      console.log('Response status:', userResponse.status);
+      console.log('Response headers:', Object.fromEntries(userResponse.headers.entries()));
 
       let userData;
       try {
         userData = await userResponse.json();
+        console.log('Parsed response data:', userData);
       } catch (error) {
         console.error('Error parsing response:', error);
         throw new Error('Invalid response from server');
       }
 
       if (!userResponse.ok) {
+        console.log('Response not OK, status:', userResponse.status);
         // Handle Laravel validation errors
         if (userData.errors) {
+          console.log('Validation errors:', userData.errors);
           setValidationErrors(userData.errors);
           return;
         }
         // Handle other error messages
         if (userData.message) {
+          console.log('Error message:', userData.message);
           setValidationErrors({ general: [userData.message] });
           return;
         }
@@ -66,19 +84,25 @@ const AddAgent = ({organizationID, authToken}) => {
       }
 
       const userId = userData?.data?.id;
+      console.log('User created successfully, ID:', userId);
 
       if (userId) {
-        agent.user_id = String(userId); // or agent.userId, depending on your backend field
+        agent.user_id = String(userId);
       }
 
       // If user creation successful, proceed with agent creation
+      console.log('Creating agent with data:', agent);
       const agentResponse = await createAgent(organizationID, agent, authToken);
       
       // Handle successful creation
       console.log('Agent created successfully:', agentResponse);
       navigate(`/agents/${agentResponse.data.agentID}`);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Detailed error in handleSubmit:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       // Handle other errors
       setValidationErrors({ general: [error.message] });
     }
