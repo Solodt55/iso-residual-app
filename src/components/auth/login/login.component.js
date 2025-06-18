@@ -4,20 +4,24 @@ import { login, generateIsoToken } from '../../../api/authApi.js';
 import { jwtDecode } from 'jwt-decode';
 import { createAgent } from '../../../api/agents.api.js';
 import { CircularProgress } from '@mui/material';
+import EulaModal from './eula-modal.component.js';
 
 const Login = ({ setUsername, setAuthToken, setOrganization }) => {
   const [localUsername, setLocalUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showEulaModal, setShowEulaModal] = useState(false);
+  const [tempCredentials, setTempCredentials] = useState(null);
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const cipher = urlParams.get('secX');
   const iv = urlParams.get('secY');
   const [showLoader, setShowLoader] = useState(!!(cipher && iv));
   const [loginError, setLoginError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Try ISO login first
-  const tryIsoLogin = async (username, pass, is_iso_user=null) => {
+  const tryIsoLogin = async (username, pass, is_iso_user=null,is_agreement=null) => {
     try {
       const body = {
         email: username,
@@ -25,7 +29,11 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
       };
 
       if (is_iso_user) {
-        body.is_iso_user = '1'; // or just use `is_iso_user` if it's already the right value
+        body.is_iso_user = '1';
+      }
+
+      if (is_agreement) {
+        body.is_agreement = '1';
       }
 
       const response = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/login`, {
@@ -80,10 +88,10 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
     }
   };
 
-  const handleLogin = async (username, pass, is_iso_user=null) => {
+  const handleLogin = async (username, pass, is_iso_user=null,is_agreement=null) => {
     try {
       // Try ISO login first
-      const isoResult = await tryIsoLogin(username, pass, is_iso_user);
+      const isoResult = await tryIsoLogin(username, pass, is_iso_user,is_agreement);
       // console.log()
       
       if (isoResult?.success) {
@@ -205,9 +213,78 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
     // eslint-disable-next-line
   }, []);
 
+  const handleEulaConsent = async () => {
+    if (tempCredentials) {
+      setShowEulaModal(false);
+      setIsLoading(true);
+      try {
+        // Proceed with login after EULA consent
+        await handleLogin(tempCredentials.email, tempCredentials.password, undefined, '1');
+        setTempCredentials(null); // Clear temp credentials
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Login error after EULA consent:', error);
+        setError('Login failed after accepting terms. Please try again.');
+        setIsLoading(false);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleLogin(localUsername, password);
+
+    if (localUsername === 'cburnell24') {
+      handleLogin(localUsername, password);
+    }
+    // console.log('handle submit');
+    // handleLogin(localUsername, password);
+
+    setError("");
+    setIsLoading(true);
+
+    try {
+      // First, check agreement status using the new API
+      const checkResponse = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/check-agreement`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          email: localUsername, 
+          password
+        }),
+      });
+
+      if (!checkResponse.ok) {
+        const errorData = await checkResponse.json();
+        console.error('Check agreement API error:', errorData);
+        setError(errorData.message || 'Invalid email or password.'); // Show error for invalid credentials
+        setIsLoading(false);
+        return; // Stop if credentials are bad or API fails
+      }
+
+      const checkData = await checkResponse.json();
+      const userAgreementStatus = checkData.user.is_agreement;
+
+      if (userAgreementStatus === 1) {
+        // If agreement is already 1, proceed with full login
+        const user_agreement = "1";
+        await handleLogin(localUsername, password, undefined, user_agreement); // Pass '1' for is_agreement and is_slug
+        navigate('/dashboard');
+      } else {
+        // If agreement is not 1, show EULA modal
+        setTempCredentials({ email: localUsername, password }); // Store credentials
+        setShowEulaModal(true); // Show EULA modal
+        setIsLoading(false); // Stop loading, EULA modal takes over
+      }
+
+    } catch (error) {
+      console.error('Login attempt error (pre-agreement check):', error);
+      setError(error.message || "An unexpected error occurred during agreement check.");
+      setIsLoading(false);
+    }
+
   };
   
   if (cipher && iv) {
@@ -261,6 +338,17 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
           Don't have an account? <Link to="/signup">Sign up here</Link>
         </p>
       </div>
+      
+      {showEulaModal && (
+        <EulaModal
+          onAgree={handleEulaConsent}
+          onCancel={() => {
+            setShowEulaModal(false);
+            setTempCredentials(null); // Clear temp credentials if cancelled
+            setIsLoading(false); // Stop loading if EULA is dismissed without agreeing
+          }}
+        />
+      )}
     </div>
   );
 };

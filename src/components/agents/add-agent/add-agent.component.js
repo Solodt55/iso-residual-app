@@ -28,17 +28,89 @@ const AddAgent = ({organizationID, authToken}) => {
     });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setValidationErrors({}); // Clear previous errors
+    
+  //   try {
+  //     console.log('Starting user creation request...');
+  //     console.log('Request URL:', `${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`);
+  //     console.log('Request payload:', agent);
+      
+  //     // First create the user
+  //     const userResponse = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${iso_token}`
+  //       },
+  //       body: JSON.stringify(agent)
+  //     });
+
+  //     // Try to parse the response regardless of status
+  //     let userData;
+  //     try {
+  //       const text = await userResponse.text(); // Get response as text first
+  //       console.log('Raw response:', text);
+  //       userData = JSON.parse(text); // Try to parse as JSON
+  //     } catch (error) {
+  //       console.error('Error parsing response:', error);
+  //       throw new Error('Invalid response from server');
+  //     }
+
+  //     // Handle Laravel validation errors (422 status code)
+  //     if (userResponse.status === 422 && userData.errors) {
+  //       console.log('Validation errors:', userData.errors);
+  //       setValidationErrors(userData.errors);
+  //       return;
+  //     }
+
+  //     // Handle other error responses
+  //     if (!userResponse.ok) {
+  //       console.log('Response not OK, status:', userResponse.status);
+  //       if (userData.message) {
+  //         console.log('Error message:', userData.message);
+  //         setValidationErrors({ general: [userData.message] });
+  //         return;
+  //       }
+  //       throw new Error('Failed to create user');
+  //     }
+
+  //     const userId = userData?.data?.id;
+  //     console.log('User created successfully, ID:', userId);
+
+  //     if (userId) {
+  //       agent.user_id = String(userId);
+  //     }
+
+  //     // If user creation successful, proceed with agent creation
+  //     console.log('Creating agent with data:', agent);
+  //     const agentResponse = await createAgent(organizationID, agent, authToken);
+      
+  //     // Handle successful creation
+  //     console.log('Agent created successfully:', agentResponse);
+  //     navigate(`/agents/${agentResponse.data.agentID}`);
+  //   } catch (error) {
+  //     console.error('Detailed error in handleSubmit:', {
+  //       name: error.name,
+  //       message: error.message,
+  //       stack: error.stack
+  //     });
+  //     // Handle other errors
+  //     setValidationErrors({ general: [error.message] });
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setValidationErrors({}); // Clear previous errors
-    
+    setValidationErrors({}); // Clear old validation errors
+  
     try {
       console.log('Starting user creation request...');
       console.log('Request URL:', `${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`);
       console.log('Request payload:', agent);
-      
-      // First create the user
-      const userResponse = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
+  
+      const response = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,60 +118,81 @@ const AddAgent = ({organizationID, authToken}) => {
         },
         body: JSON.stringify(agent)
       });
-
-      // Try to parse the response regardless of status
-      let userData;
+  
+      const responseText = await response.text(); // always parse text first
+      console.log('Raw response:', responseText);
+  
+      let responseData;
       try {
-        const text = await userResponse.text(); // Get response as text first
-        console.log('Raw response:', text);
-        userData = JSON.parse(text); // Try to parse as JSON
-      } catch (error) {
-        console.error('Error parsing response:', error);
-        throw new Error('Invalid response from server');
+        responseData = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error('Invalid JSON response from server.');
       }
-
-      // Handle Laravel validation errors (422 status code)
-      if (userResponse.status === 422 && userData.errors) {
-        console.log('Validation errors:', userData.errors);
-        setValidationErrors(userData.errors);
+  
+      // ✅ Handle 422 Laravel Validation Error
+      if (response.status === 422 && responseData.errors) {
+        console.log('Laravel validation errors:', responseData.errors);
+        setValidationErrors(responseData.errors); // Update validation errors for UI
         return;
       }
-
-      // Handle other error responses
-      if (!userResponse.ok) {
-        console.log('Response not OK, status:', userResponse.status);
-        if (userData.message) {
-          console.log('Error message:', userData.message);
-          setValidationErrors({ general: [userData.message] });
-          return;
-        }
-        throw new Error('Failed to create user');
+  
+      // ❌ Any other non-successful status
+      if (!response.ok) {
+        console.log('Non-OK response received:', response.status);
+        setValidationErrors({ general: [responseData.message || 'Failed to create user.'] });
+        return;
       }
-
-      const userId = userData?.data?.id;
+  
+      // ✅ Successfully created user
+      const userId = responseData?.data?.id;
       console.log('User created successfully, ID:', userId);
-
       if (userId) {
         agent.user_id = String(userId);
-      }
+        // Send credentials email
+        try {
+          const formattedToken = `Bearer ${iso_token}`;
+          const emailResponse = await fetch(
+            `${process.env.REACT_APP_ISO_BACKEND_URL}/send-credentials-mail`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: formattedToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name: `${agent.fName} ${agent.lName}`,
+                email: agent.email,
+                password: agent.password,
+                user_id: userId,
+                website_name: "Tracer",
+                website_url: `${process.env.REACT_APP_WEBSITE_URL}/login`,
+              }),
+            }
+          );
 
-      // If user creation successful, proceed with agent creation
+          const emailData = await emailResponse.json();
+          if (!emailResponse.ok) {
+            console.error("Failed to send credentials email:", emailData);
+          } else {
+            console.error("User created and credentials sent successfully.");
+          }
+        } catch (emailError) {
+          console.error("Error sending email:", emailError);
+        }
+      }
+  
+      // Proceed to create agent
       console.log('Creating agent with data:', agent);
       const agentResponse = await createAgent(organizationID, agent, authToken);
-      
-      // Handle successful creation
       console.log('Agent created successfully:', agentResponse);
+      
       navigate(`/agents/${agentResponse.data.agentID}`);
     } catch (error) {
-      console.error('Detailed error in handleSubmit:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-      // Handle other errors
-      setValidationErrors({ general: [error.message] });
+      console.error('Unexpected error occurred:', error);
+      setValidationErrors({ general: [error.message || 'Something went wrong.'] });
     }
   };
+  
 
   return (
     <div className="add-agent-container bg-zinc-900 p-10 rounded-lg shadow-lg w-full max-w-md w-full">

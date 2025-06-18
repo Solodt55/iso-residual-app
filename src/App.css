@@ -91,6 +91,88 @@ section {
 
 
 
+/* EULA Modal Light Theme Enhancements */
+.eula-modal-overlay {
+  background: rgba(30, 41, 59, 0.7); /* darken overlay for contrast */
+  z-index: 50;
+}
+
+.eula-modal-card {
+  background: #f9fafb; /* subtle off-white */
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  border: 1px solid #e5e7eb;
+  max-width: 36rem;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.eula-modal-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  background: #fff;
+}
+
+.eula-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: center;
+}
+
+.eula-modal-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  color: #334155;
+  background: #f9fafb;
+}
+
+.eula-modal-footer {
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.eula-modal-footer label {
+  color: #334155;
+}
+
+.eula-modal-footer button {
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.eula-modal-footer .agree-btn {
+  background: #facc15;
+  color: #fff;
+}
+
+.eula-modal-footer .agree-btn:disabled {
+  background: #fde68a;
+  color: #fff;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.eula-modal-footer .cancel-btn {
+  background: #e5e7eb;
+  color: #334155;
+}
+.eula-modal-footer .cancel-btn:hover {
+  background: #d1d5db;
+}
+
+
+
 /***************/
 
 body[data-theme="dark"] .report-item {
