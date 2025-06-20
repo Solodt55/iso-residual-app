@@ -106,10 +106,6 @@ const AddAgent = ({organizationID, authToken}) => {
     setValidationErrors({}); // Clear old validation errors
   
     try {
-      console.log('Starting user creation request...');
-      console.log('Request URL:', `${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`);
-      console.log('Request payload:', agent);
-  
       const response = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
         method: 'POST',
         headers: {
@@ -128,15 +124,16 @@ const AddAgent = ({organizationID, authToken}) => {
       } catch (parseError) {
         throw new Error('Invalid JSON response from server.');
       }
-  
-      // ✅ Handle 422 Laravel Validation Error
-      if (response.status === 422 && responseData.errors) {
-        console.log('Laravel validation errors:', responseData.errors);
+
+       // ✅ Handle Laravel-style validation error (status 200 but body contains error)
+      if (
+        responseData.message === "Validation failed" &&
+        typeof responseData.errors === "object"
+      ) {
         setValidationErrors(responseData.errors); // Update validation errors for UI
         return;
       }
   
-      // ❌ Any other non-successful status
       if (!response.ok) {
         console.log('Non-OK response received:', response.status);
         setValidationErrors({ general: [responseData.message || 'Failed to create user.'] });
