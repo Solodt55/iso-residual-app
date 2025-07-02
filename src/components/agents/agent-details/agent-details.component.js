@@ -248,17 +248,47 @@ const AgentDetails = ({ agent, allAgents, onAgentChange, userID }) => {
                   disabled={userID !== ''}
                 >
                   <option value="">Select {split.type}</option>
-                  {allAgents.map((agent) => {
-                    const fullName = `${agent.fName} ${agent.lName}`;
+                  {(() => {
+                    // Get all agents with their full names
+                    const agentsWithNames = allAgents.map(agent => ({
+                      ...agent,
+                      fullName: `${agent.fName} ${agent.lName}`
+                    }));
+                    
+                    // Get all agent full names for comparison
+                    const agentFullNames = agentsWithNames.map(agent => agent.fullName);
+                    
+                    // Get unique companies, excluding those that match agent full names
+                    const uniqueCompanies = [...new Set(
+                      allAgents
+                        .map(agent => agent.company)
+                        .filter(Boolean)
+                        .filter(company => !agentFullNames.includes(company))
+                    )];
+                    
                     return (
-                      <option 
-                        key={agent.agentID} 
-                        value={fullName}
-                      >
-                        {fullName}
-                      </option>
+                      <>
+                        {/* Company options */}
+                        {uniqueCompanies.map((company) => (
+                          <option 
+                            key={`company-${company}`} 
+                            value={company}
+                          >
+                            {company}
+                          </option>
+                        ))}
+                        {/* Agent options */}
+                        {agentsWithNames.map((agent) => (
+                          <option 
+                            key={agent.agentID} 
+                            value={agent.fullName}
+                          >
+                            {agent.fullName}
+                          </option>
+                        ))}
+                      </>
                     );
-                  })}
+                  })()}
                 </select>
                 <input
                   type="text"
