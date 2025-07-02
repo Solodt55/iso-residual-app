@@ -58,7 +58,7 @@ const AgentUploader = ({ authToken, organizationID }) => {
   return (
     <div class="agtupload min-h-screen flex items-center justify-center">
     <div className="agent-upload-container bg-zinc-900 p-10 rounded-lg shadow-lg w-full max-w-md " >
-      <h2 className='pb-6 mb-6 border-b border-yellow-400/20'>Upload Agent List</h2>
+      <h2 className='pb-6 mb-6 border-b border-yellow-400/20'>Upload Merchant Reports</h2>
 
       <form onSubmit={handleUpload}>
         <div className="file-input-container ">
