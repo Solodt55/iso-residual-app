@@ -10,6 +10,7 @@ const processorTypeMap = {
     'Merchant Lynx': 'type1',
     'Micamp': 'type1',
     'Payment Advisors': 'type1',
+    'PayBright': 'type5',
     'Shift4': 'type2',
     'Hyfin': 'type4',
     'Rectangle Health': 'type4',
@@ -112,6 +113,15 @@ const regenerateReportData = (report, merchantIDMap) => {
                     'Branch ID': branchID,
                     '%': formatPercentage(bankSplit),
                     'Bank Payout': calculateBankPayout(row['Net'], bankSplit).toFixed(2),
+                    needsAudit: false,
+                };
+
+            case 'type5':
+                return {
+                    ...row,
+                    'BPS': row['BPS'] || 'N/A',
+                    '%': formatPercentage(bankSplit),
+                    'Agent Net': calculateBankPayout(row['Net'], bankSplit).toFixed(2),
                     needsAudit: false,
                 };
 

@@ -29,6 +29,7 @@ const NeedsUploaded = ({ reports }) => {
       'Merchant Lynx': 'process report',
       'Micamp': 'process report',
       'Payment Advisors': 'process report',
+      'PayBright': 'process report',
       'Shift4': 'process report',
       'Hyfin': 'process report',
       'Rectangle Health': 'process report',
