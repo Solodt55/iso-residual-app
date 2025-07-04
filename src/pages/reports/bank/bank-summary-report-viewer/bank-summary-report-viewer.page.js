@@ -260,6 +260,18 @@ useEffect(() => {
       "Bank Payout",
       "Branch ID",
     ],
+    type5: [
+      "Merchant Id",
+      "Merchant Name",
+      "Transaction",
+      "Sales Amount",
+      "Income",
+      "Expenses",
+      "Net",
+      "BPS",
+      "%",
+      "Agent Net",
+    ],
   };
 
   const getProcessorType = (processor) =>

@@ -135,7 +135,8 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
         type1: ['Merchant Id', 'Merchant Name', 'Transaction', 'Sales Amount', 'Income', 'Expenses', 'Net', 'BPS', '%', 'Agent Net', 'Branch ID'],
         type2: ['Merchant Id', 'Merchant Name', 'Payout Amount', 'Volume', 'Sales', 'Refunds', 'Reject Amount', 'Bank Split', 'Bank Payout', 'Branch ID'],
         type3: ['Merchant Id', 'Merchant DBA', 'Payout Amount', 'Volume', 'Sales', 'Refunds', 'Reject Amount', 'Bank Split', 'Bank Payout', 'Branch ID'],
-        type4: ['Merchant Id', 'Merchant Name', 'Income', 'Expenses', 'Net', '%', 'Agent Net', 'Branch ID']
+        type4: ['Merchant Id', 'Merchant Name', 'Income', 'Expenses', 'Net', '%', 'Agent Net', 'Branch ID'],
+        type5: ['Merchant Id', 'Merchant Name', 'Transaction', 'Sales Amount', 'Income', 'Expenses', 'Net', 'BPS', '%', 'Agent Net']
     };
 
     const getProcessorType = (processor) => processorTypeMap[processor] || 'type1';
@@ -202,6 +203,7 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
                 // Aggregate totals based on processor type
                 switch (processorType) {
                     case 'type1':
+                    case 'type5':
                         totalSales += parseFloat(parseValue(item['Sales Amount'])) || 0;
                         totalAgentNet += parseFloat(parseValue(item['Agent Net'])) || 0;
                         break;
