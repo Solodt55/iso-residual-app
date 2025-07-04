@@ -18,21 +18,27 @@ export const addReport = async (organizationID, reportData, authToken) => {
 };
 
 export const getReports = async (organizationID, type, authToken) => {
-  console.log('ggggg',organizationID, type, authToken);
+  console.log('getReports called with:', organizationID, type, authToken);
   try {
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
+    let response;
+    
     if (type === 'all') {
-      const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
-      return response.data;
+      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+    } else {
+      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
     }
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
 
-    console.log('responsewwwwwwwwwww',response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Error fetching reports:", error);
+    if (error.response && error.response.status === 404) {
+      // Return empty array for 404 instead of throwing
+      return [];
+    }
     throw error.response?.data || error.message;
   }
 };
