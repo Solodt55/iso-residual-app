@@ -125,7 +125,8 @@ const TableWithFilters = ({
   };
 
   const handleSave = (updatedRow) => {
-    // console.log('updatedRow',updatedRow);
+    console.log('updatedRow',updatedRow);
+    // return false;
     // console.log('data',data);
     // return false;
     // const updatedData = data.map(row =>
@@ -156,7 +157,7 @@ const TableWithFilters = ({
     );
     }
 
-    // console.log('updatedData',updatedData);
+    console.log('updatedData',updatedData);
     // console.log('updatedRow',updatedRow);
     // console.log('data',data);
     // return false;

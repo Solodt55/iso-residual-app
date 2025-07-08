@@ -318,3 +318,29 @@ export const createAgentSummaryReport = async (organizationID, reportData, authT
     throw error.response?.data || error.message;
   }
 };
+
+export const updateReportDataByType = async (organizationID, type, newMerchants, authToken) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+    
+    const requestBody = {
+      type: type,
+      newMerchants: newMerchants
+    };
+
+    const response = await axios.put(
+      `${ROUTE_BASE_URL}/organizations/${organizationID}/update-report-data`, 
+      requestBody, 
+      { headers }
+    );
+    
+    console.log('Update report data response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating report data by type:", error);
+    throw error.response?.data || error.message;
+  }
+};

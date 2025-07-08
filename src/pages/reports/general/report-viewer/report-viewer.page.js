@@ -31,6 +31,7 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
         value: ''
     });
     const [agents, setAgents] = useState([]);
+    // console.log('filteredData page',filteredData);
 
     const splitTypes = ['agent', 'company', 'manager', 'partner', 'rep'];
 
@@ -100,11 +101,18 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                 const data = await getReportById(reportID, authToken);
                 setIdField(Object.keys(data.reportData[0])[1]);
                 setReport(data);
-                setReportData(data.reportData);
-                setFilteredData(data.reportData);
+                
+                // Process and sort the report data
+                let processedData = data.reportData;
+                
+                // Capitalize Merchant Name and sort alphabetically
+                processedData = processAndSortData(processedData);
+                
+                setReportData(processedData);
+                setFilteredData(processedData);
                 
                 setLoading(false);
-                console.log("Fetched report data:", data.reportData);
+                console.log("Fetched and processed report data:", processedData);
             } catch (err) {
                 console.error("Report fetch error:", err?.response?.data || err.message);
                 if (err?.response?.data?.error === "Invalid or expired token") {
@@ -127,7 +135,11 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
             setStatus({ loading: true, error: null });
             const updatedReport = await regenerateProcessorReport(report.organizationID, authToken, report);
             setReport(updatedReport);
-            setFilteredData(updatedReport.reportData);
+            
+            // Process and sort the regenerated data
+            const processedData = processAndSortData(updatedReport.reportData);
+            setFilteredData(processedData);
+            
             setHasChanges(true); // Mark changes as unsaved
             setStatus({ loading: false, error: null });
         } catch (error) {
@@ -266,6 +278,8 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                     splits: row[idField] === editRow?.[idField] ? splits : (row.splits || [])
                 }))
             };
+
+            console.log('updatedReportApproved',updatedReport);
     
             await updateReport(reportID, updatedReport, authToken);
             alert("Report saved successfully.");
@@ -280,6 +294,32 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
     const capitalizeFirstLetter = (string) => {
         if (!string) return '';
         return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    // Helper function to process and sort data
+    const processAndSortData = (data) => {
+        if (!data || data.length === 0) return data;
+        
+        let processedData = data.map(row => {
+            const newRow = { ...row };
+            // Capitalize Merchant Name if it exists
+            if (newRow['Merchant Name']) {
+                newRow['Merchant Name'] = newRow['Merchant Name']
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+            }
+            return newRow;
+        });
+        
+        // Sort alphabetically by Merchant Name
+        processedData.sort((a, b) => {
+            const nameA = (a['Merchant Name'] || '').toLowerCase();
+            const nameB = (b['Merchant Name'] || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        
+        return processedData;
     };
 
     console.log('report?.type',report?.type);
