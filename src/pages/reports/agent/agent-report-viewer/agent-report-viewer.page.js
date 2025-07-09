@@ -39,6 +39,32 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
     const monthYear = searchParams.get("month");
     const navigate = useNavigate();
 
+    // Helper function to sort merchant data alphabetically by merchant name
+    const sortMerchantDataAlphabetically = (data) => {
+        return data.map(processorReport => ({
+            ...processorReport,
+            reportData: processorReport.reportData
+                .map(item => {
+                    // Capitalize merchant names
+                    const updatedItem = { ...item };
+                    if (updatedItem["Merchant Name"]) {
+                        updatedItem["Merchant Name"] = updatedItem["Merchant Name"].toUpperCase();
+                    }
+                    if (updatedItem["Merchant DBA"]) {
+                        updatedItem["Merchant DBA"] = updatedItem["Merchant DBA"].toUpperCase();
+                    }
+                    return updatedItem;
+                })
+                .sort((a, b) => {
+                    // Sort alphabetically by merchant name (A to Z)
+                    const field = processorReport.processor === "TRX" ? "Merchant DBA" : "Merchant Name";
+                    const nameA = (a[field] || "").toUpperCase();
+                    const nameB = (b[field] || "").toUpperCase();
+                    return nameA.localeCompare(nameB);
+                })
+        }));
+    };
+
     const token = localStorage.getItem('authToken');
     const decodedToken = jwtDecode(token);
     const userId = decodedToken?.user_id || '';
@@ -86,16 +112,22 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
             setAgent(agentData);
     
             const generatedReportData = generatedResponse.data?.reportData || [];
-            setGeneratedReportData(generatedReportData);
+            
+            // Process and sort the generated report data alphabetically
+            const processedGeneratedData = sortMerchantDataAlphabetically(generatedReportData);
+            setGeneratedReportData(processedGeneratedData);
             setDbReport(savedResponse?.data || null);
     
             // Merge the reports
-            if (generatedReportData.length) {
-                console.log('arg1:', generatedReportData);
+            if (processedGeneratedData.length) {
+                console.log('arg1:', processedGeneratedData);
                 console.log('arg2:', savedResponse?.data?.reportData || null);
-                const merged = mergeReports(generatedReportData, savedResponse?.data?.reportData || null);
-                setMergedData(merged);
-                console.log("Merged data:", merged);
+                const merged = mergeReports(processedGeneratedData, savedResponse?.data?.reportData || null);
+                
+                // Process and sort the merged data as well
+                const processedMergedData = sortMerchantDataAlphabetically(merged);
+                setMergedData(processedMergedData);
+                console.log("Merged data:", processedMergedData);
             } else {
                 console.warn("Generated report is empty. No data to merge.");
                 setMergedData([]);
@@ -275,14 +307,35 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                 return;
             }
     
+            // Process and sort the report data for export
+            const processedReportData = processorReport.reportData
+                .map(item => {
+                    // Ensure merchant names are capitalized
+                    const updatedItem = { ...item };
+                    if (updatedItem["Merchant Name"]) {
+                        updatedItem["Merchant Name"] = updatedItem["Merchant Name"].toUpperCase();
+                    }
+                    if (updatedItem["Merchant DBA"]) {
+                        updatedItem["Merchant DBA"] = updatedItem["Merchant DBA"].toUpperCase();
+                    }
+                    return updatedItem;
+                })
+                .sort((a, b) => {
+                    // Sort alphabetically by merchant name (A to Z)
+                    const field = processorReport.processor === "TRX" ? "Merchant DBA" : "Merchant Name";
+                    const nameA = (a[field] || "").toUpperCase();
+                    const nameB = (b[field] || "").toUpperCase();
+                    return nameA.localeCompare(nameB);
+                });
+    
             // ✅ Extract headers dynamically, ensuring the reportData[0] exists
-            const headers = Object.keys(processorReport.reportData[0] || {}).filter(header => header !== "approved");
+            const headers = Object.keys(processedReportData[0] || {}).filter(header => header !== "approved");
     
             // ✅ Add processor name and dynamic headers
             csvRows.push([escapeCSVValue(processorReport.processor)]); 
             csvRows.push(headers.map(escapeCSVValue).join(',')); // Escape headers as well
     
-            processorReport.reportData.forEach((item) => {
+            processedReportData.forEach((item) => {
                 // ✅ Corrected the handling for both strings and numbers
                 const parseValue = (value) => {
                     if (typeof value === "boolean") return value; // Keep booleans as is
@@ -316,12 +369,12 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                     return ''; // ✅ Skip these non-numeric columns
                 }
     
-                const isNumericColumn = processorReport.reportData.some(
+                const isNumericColumn = processedReportData.some(
                     row => !isNaN(parseFloat(row[header]))
                 );
     
                 if (isNumericColumn) {
-                    const total = processorReport.reportData.reduce((sum, row) => {
+                    const total = processedReportData.reduce((sum, row) => {
                         const value = parseFloat(row[header]) || 0;
                         return sum + value;
                     }, 0);
