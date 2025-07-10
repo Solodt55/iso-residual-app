@@ -134,58 +134,57 @@ const ReportUpload = ({ authToken, organizationID }) => {
 
       if (response && response.status === 200) {
 
-         // Fetch and console.log all agents after successful upload
-         try {
-          const agentsResponse = await getAgents(organizationID, authToken);
-          console.log("All agents after upload:", agentsResponse);
+        // Fetch and console.log all agents after successful upload
+        //  try {
+        //   const agentsResponse = await getAgents(organizationID, authToken);
+        //   console.log("All agents after upload:", agentsResponse);
 
-          // Extract all clients from all agents and format them
-          const allMerchants = [];
+        //   // Extract all clients from all agents and format them
+        //   const allMerchants = [];
           
-          if (agentsResponse && Array.isArray(agentsResponse.agents)) {
-            agentsResponse.agents.forEach(agent => {
-              if (agent.clients && Array.isArray(agent.clients)) {
-                agent.clients.forEach(client => {
-                  if (client.merchantID && client.merchantName) {
-                    allMerchants.push({
-                      "Merchant Id": client.merchantID,
-                      "Merchant Name": client.merchantName,
-                      "Branch ID": client.branchID || ""
-                    });
-                  }
-                });
-              }
-            });
-          }
+        //   if (agentsResponse && Array.isArray(agentsResponse.agents)) {
+        //     agentsResponse.agents.forEach(agent => {
+        //       if (agent.clients && Array.isArray(agent.clients)) {
+        //         agent.clients.forEach(client => {
+        //           if (client.merchantID && client.merchantName) {
+        //             allMerchants.push({
+        //               "Merchant Id": client.merchantID,
+        //               "Merchant Name": client.merchantName,
+        //               "Branch ID": client.branchID || ""
+        //             });
+        //           }
+        //         });
+        //       }
+        //     });
+        //   }
 
-          // Create the formatted structure
-          const formattedMerchants = {
-            "type": "processor",
-            "newMerchants": allMerchants
-          };
+        //   // Create the formatted structure
+        //   const formattedMerchants = {
+        //     "type": "processor",
+        //     "newMerchants": allMerchants
+        //   };
 
-          console.log("Formatted merchants data:", formattedMerchants);
-          console.log("Total merchants found:", allMerchants.length);
+        //   console.log("Formatted merchants data:", formattedMerchants);
+        //   console.log("Total merchants found:", allMerchants.length);
 
-          // Call the API to update report data with the formatted merchants
-          if (allMerchants.length > 0) {
-            try {
-              const updateResponse = await updateReportDataByType(
-                organizationID, 
-                "processor", 
-                allMerchants, 
-                authToken
-              );
-              console.log("Report data update response:", updateResponse);
-            } catch (updateError) {
-              console.error("Error updating report data:", updateError);
-            }
-          }
+        //   // Call the API to update report data with the formatted merchants
+        //   if (allMerchants.length > 0) {
+        //     try {
+        //       const updateResponse = await updateReportDataByType(
+        //         organizationID, 
+        //         "processor", 
+        //         allMerchants, 
+        //         authToken
+        //       );
+        //       console.log("Report data update response:", updateResponse);
+        //     } catch (updateError) {
+        //       console.error("Error updating report data:", updateError);
+        //     }
+        //   }
 
-        } catch (agentError) {
-          console.error("Error fetching agents:", agentError);
-        }
-
+        // } catch (agentError) {
+        //   console.error("Error fetching agents:", agentError);
+        // }
 
         setUploadStatus('Files uploaded successfully!');
         setLoading(false); // Hide loading popup
