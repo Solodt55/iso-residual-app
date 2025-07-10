@@ -23,7 +23,8 @@ const AgentReportViewer = ({
     hasChanges,
     setHasChanges, 
     agents,
-    updatedMerchantData
+    updatedMerchantData,
+    userID
 }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const reportData = mergedData[0]?.reportData || [];
@@ -313,6 +314,8 @@ const AgentReportViewer = ({
                 setHasChanges={setHasChanges}
                 hasChanges={hasChanges}
                 editDialogProps={editDialogProps}
+                type="report"
+                userID={userID}
             />
         </Box>
     );

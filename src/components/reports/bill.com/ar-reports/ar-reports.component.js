@@ -35,7 +35,7 @@ const ARReports = ({ authToken, organizationID }) => {
         let filtered = reports;
 
         if (filterMonth) {
-            filtered = filtered.filter(report => report.month.includes(filterMonth));
+            filtered = filtered.filter(report => report.month && report.month.includes(filterMonth));
         }
 
         if (filterYear) {

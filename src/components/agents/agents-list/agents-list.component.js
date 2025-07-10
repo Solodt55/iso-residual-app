@@ -5,6 +5,7 @@ import { FaEye, FaTrash } from 'react-icons/fa';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import './agents-list.component.css';
+import { jwtDecode } from 'jwt-decode';
 
 const AgentsList = ({ organizationID, authToken }) => {
   const [agents, setAgents] = useState([]);
@@ -12,17 +13,28 @@ const AgentsList = ({ organizationID, authToken }) => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
+  
+  const token = localStorage.getItem('authToken');
+  // console.log('localStorage',localStorage);
+  const decodedToken = jwtDecode(token);
+  console.log('decodedToken',decodedToken);
+  const roleId = decodedToken.roleId;  
+  const userId = decodedToken.user_id;  
+  console.log('agents',agents);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const agentsPerPage = 10;
+
+  const iso_token = localStorage.getItem('iso_token');
 
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         const response = await getAgents(organizationID, authToken);
         if (response && response.agents && Array.isArray(response.agents)) {
-          setAgents(response.agents);
+          const filteredAgents = response.agents.filter(agent => agent.user_id !== '2');
+          setAgents(filteredAgents);
         } else {
           setAgents([]);
         }
@@ -36,7 +48,7 @@ const AgentsList = ({ organizationID, authToken }) => {
     fetchAgents();
   }, [organizationID, authToken]);
 
-  const handleDelete = async (agentID) => {
+  const handleDelete = async (agentID, user_id = null) => {
     confirmAlert({
       title: 'Confirm to delete',
       message: 'Are you sure you want to delete this agent? This action can\'t be undone.',
@@ -45,6 +57,25 @@ const AgentsList = ({ organizationID, authToken }) => {
           label: 'Yes',
           onClick: async () => {
             try {
+              
+              
+              if(user_id && user_id != null){
+                const userResponse = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/destroy/${user_id}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${iso_token}`
+                  }
+                  // body: JSON.stringify(agent)
+                });
+                
+                const userData = await userResponse.json();
+                console.log('userData',userData);
+                
+                if (!userResponse.ok) {
+                  throw new Error(userData.message || 'Failed to delete user');
+                }
+              }
               await deleteAgent(organizationID, agentID, authToken);
               setAgents(agents.filter(agent => agent.agentID !== agentID));
             } catch (err) {
@@ -125,11 +156,13 @@ const AgentsList = ({ organizationID, authToken }) => {
           <option value="individual">Individual</option>
         </select>
         <div className="actions-container">
-          <Link to="/agents/add-agent" className="add-agent-link">
-            <button className="add-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Add New Agent</button>
-          </Link>
+         {(!roleId || roleId === 1 || roleId === 2) && (
+            <Link to="/agents/add-agent" className="add-agent-link">
+              <button className="add-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Add New Agent</button>
+            </Link>
+          )}
           <Link to="/agents/upload" className="upload-agent-link">
-            <button className="upload-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Upload Agents</button>
+            <button className="upload-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Upload Merchant Reports</button>
           </Link>
         </div>
 
@@ -161,7 +194,7 @@ const AgentsList = ({ organizationID, authToken }) => {
                     </Link>
                     <button 
                       className="btn-delete text-yellow-400 hover:text-yellow-500" 
-                      onClick={() => handleDelete(agent.agentID)}
+                      onClick={() => handleDelete(agent.agentID,agent?.user_id)}
                     >
                       <FaTrash />
                     </button>

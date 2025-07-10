@@ -9,6 +9,7 @@ import { getReportById, updateReport } from "../../../../api/reports.api";
 import { regenerateProcessorReport } from "../../../../utils/reports/processorReport.util";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getAgents } from "../../../../api/agents.api";
+import { jwtDecode } from 'jwt-decode';
 
 const ReportViewerPage = ({ authToken, organizationID }) => {
     const { reportID } = useParams();
@@ -30,8 +31,21 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
         value: ''
     });
     const [agents, setAgents] = useState([]);
+    // console.log('filteredData page',filteredData);
 
     const splitTypes = ['agent', 'company', 'manager', 'partner', 'rep'];
+
+    const token = localStorage.getItem('authToken');
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken?.user_id || '';
+    const roleId = decodedToken?.roleId || '';
+
+    let userID = '';
+
+    // Add userId to formData if condition is met
+    if (decodedToken && (userId !== '') && (roleId !== 1 && roleId !== 2)) {
+       userID = userId
+    }
 
     // Validate token on component mount
     useEffect(() => {
@@ -87,11 +101,18 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                 const data = await getReportById(reportID, authToken);
                 setIdField(Object.keys(data.reportData[0])[1]);
                 setReport(data);
-                setReportData(data.reportData);
-                setFilteredData(data.reportData);
+                
+                // Process and sort the report data
+                let processedData = data.reportData;
+                
+                // Capitalize Merchant Name and sort alphabetically
+                processedData = processAndSortData(processedData);
+                
+                setReportData(processedData);
+                setFilteredData(processedData);
                 
                 setLoading(false);
-                console.log("Fetched report data:", data.reportData);
+                console.log("Fetched and processed report data:", processedData);
             } catch (err) {
                 console.error("Report fetch error:", err?.response?.data || err.message);
                 if (err?.response?.data?.error === "Invalid or expired token") {
@@ -114,7 +135,11 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
             setStatus({ loading: true, error: null });
             const updatedReport = await regenerateProcessorReport(report.organizationID, authToken, report);
             setReport(updatedReport);
-            setFilteredData(updatedReport.reportData);
+            
+            // Process and sort the regenerated data
+            const processedData = processAndSortData(updatedReport.reportData);
+            setFilteredData(processedData);
+            
             setHasChanges(true); // Mark changes as unsaved
             setStatus({ loading: false, error: null });
         } catch (error) {
@@ -167,14 +192,14 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
     });
 
     // Add the "Approved" column
-    baseColumns.push({
-        field: "approved",
-        label: "Approved",
-        render: (approved) =>
-            approved ? (
-                <FaCheck color="green" title="Approved" />
-            ) : null,
-    });
+    // baseColumns.push({
+    //     field: "approved",
+    //     label: "Approved",
+    //     render: (approved) =>
+    //         approved ? (
+    //             <FaCheck color="green" title="Approved" />
+    //         ) : null,
+    // });
 
     // Use the base columns for the table
     const columns = baseColumns;
@@ -253,6 +278,8 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                     splits: row[idField] === editRow?.[idField] ? splits : (row.splits || [])
                 }))
             };
+
+            console.log('updatedReportApproved',updatedReport);
     
             await updateReport(reportID, updatedReport, authToken);
             alert("Report saved successfully.");
@@ -269,8 +296,37 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
+    // Helper function to process and sort data
+    const processAndSortData = (data) => {
+        if (!data || data.length === 0) return data;
+        
+        let processedData = data.map(row => {
+            const newRow = { ...row };
+            // Capitalize Merchant Name if it exists
+            if (newRow['Merchant Name']) {
+                newRow['Merchant Name'] = newRow['Merchant Name']
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+            }
+            return newRow;
+        });
+        
+        // Sort alphabetically by Merchant Name
+        processedData.sort((a, b) => {
+            const nameA = (a['Merchant Name'] || '').toLowerCase();
+            const nameB = (b['Merchant Name'] || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        
+        return processedData;
+    };
+
+    console.log('report?.type',report?.type);
+
     const editDialogProps = {
         getFields: (row) => {
+            // console.log('row22',row);
             const baseFields = columns.map((col) => ({
                 label: col.label,
                 field: col.field,
@@ -278,108 +334,115 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                 defaultValue: row?.[col.field] || col.defaultValue || "",
             }));
 
-            const splitFields = [   
-                {
-                    label: "Other Splits",
-                    field: "splits_section",
-                    type: "custom",
-                    component: ({ value = row.splits || [], onChange }) => {
-                        const splitsArray = value;
-                        return (
-                            <Box sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-                                <Typography variant="h6" gutterBottom>Other Splits</Typography>
-                                {splitsArray.map((split, index) => (
-                                    <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                                        <FormControl fullWidth>
-                                            <InputLabel>Split Type</InputLabel>
-                                            <Select
-                                                value={split.type}
-                                                className="select-nn"
+            let splitFields = [];
+            const excludedTypes = ['billing', 'ar'];
+
+            if (!excludedTypes.includes(report?.type)) {
+
+                splitFields = [   
+                    {
+                        label: "Other Splits",
+                        field: "splits_section",
+                        type: "custom",
+                        component: ({ value = row.splits || [], onChange }) => {
+                            const splitsArray = value;
+                            return (
+                                <Box sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+                                    <Typography variant="h6" gutterBottom>Other Splits</Typography>
+                                    {splitsArray.map((split, index) => (
+                                        <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                            <FormControl fullWidth>
+                                                <InputLabel>Split Type</InputLabel>
+                                                <Select
+                                                    value={split.type}
+                                                    className="select-nn"
+                                                    onChange={(e) => {
+                                                        const updatedSplits = [...splitsArray];
+                                                        updatedSplits[index] = { ...updatedSplits[index], type: e.target.value };
+                                                        onChange(updatedSplits);
+                                                    }}
+                                                    label="Split Type"
+                                                >
+                                                    {splitTypes.map(type => (
+                                                        <MenuItem key={type} value={type}>
+                                                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+    
+                                            <FormControl fullWidth>
+                                                <InputLabel>Name</InputLabel>
+                                                <Select
+                                                    value={split.name || ''}
+                                                    onChange={(e) => {
+                                                        const updatedSplits = [...splitsArray];
+                                                        updatedSplits[index] = { 
+                                                            ...updatedSplits[index], 
+                                                            name: e.target.value 
+                                                        };
+                                                        onChange(updatedSplits);
+                                                    }}
+                                                    label="Name"
+                                                >
+                                                    {agents.map((agent) => (
+                                                        <MenuItem 
+                                                            key={agent.agentID} 
+                                                            value={`${agent.fName} ${agent.lName}`}
+                                                        >
+                                                            {`${agent.fName} ${agent.lName}`}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+    
+                                                {/* <TextField
+                                                    label="Name"
+                                                    value={split.name || ''}
+                                                    onChange={(e) => {
+                                                        const updatedSplits = [...splitsArray];
+                                                        updatedSplits[index] = { ...updatedSplits[index], name: e.target.value };
+                                                        onChange(updatedSplits);
+                                                    }}
+                                                /> */}
+    
+                                            <TextField
+                                                label="Value"
+                                                type="number"
+                                                value={split.value || ''}
                                                 onChange={(e) => {
                                                     const updatedSplits = [...splitsArray];
-                                                    updatedSplits[index] = { ...updatedSplits[index], type: e.target.value };
+                                                    updatedSplits[index] = { ...updatedSplits[index], value: e.target.value };
                                                     onChange(updatedSplits);
                                                 }}
-                                                label="Split Type"
+                                            />
+                                            <IconButton 
+                                                color="error"
+                                                className="dlt-btn"
+                                                onClick={() => {
+                                                    const updatedSplits = splitsArray.filter((_, i) => i !== index);
+                                                    onChange(updatedSplits);
+                                                }}
                                             >
-                                                {splitTypes.map(type => (
-                                                    <MenuItem key={type} value={type}>
-                                                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Box>
+                                    ))}
+                                    <Button 
+                                        variant="contained" 
+                                        onClick={() => onChange([...splitsArray, { type: '', name: '', value: '' }])}
+                                        sx={{ mt: 2 }}
+                                    >
+                                        Add Split
+                                    </Button>
+                                </Box>
+                            );
+                        },
+                        defaultValue: row.splits || [],
+                    }
+                ];
+            }
 
-                                        <FormControl fullWidth>
-                                            <InputLabel>Name</InputLabel>
-                                            <Select
-                                                value={split.name || ''}
-                                                onChange={(e) => {
-                                                    const updatedSplits = [...splitsArray];
-                                                    updatedSplits[index] = { 
-                                                        ...updatedSplits[index], 
-                                                        name: e.target.value 
-                                                    };
-                                                    onChange(updatedSplits);
-                                                }}
-                                                label="Name"
-                                            >
-                                                {agents.map((agent) => (
-                                                    <MenuItem 
-                                                        key={agent.agentID} 
-                                                        value={`${agent.fName} ${agent.lName}`}
-                                                    >
-                                                        {`${agent.fName} ${agent.lName}`}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-
-                                            {/* <TextField
-                                                label="Name"
-                                                value={split.name || ''}
-                                                onChange={(e) => {
-                                                    const updatedSplits = [...splitsArray];
-                                                    updatedSplits[index] = { ...updatedSplits[index], name: e.target.value };
-                                                    onChange(updatedSplits);
-                                                }}
-                                            /> */}
-
-                                        <TextField
-                                            label="Value"
-                                            type="number"
-                                            value={split.value || ''}
-                                            onChange={(e) => {
-                                                const updatedSplits = [...splitsArray];
-                                                updatedSplits[index] = { ...updatedSplits[index], value: e.target.value };
-                                                onChange(updatedSplits);
-                                            }}
-                                        />
-                                        <IconButton 
-                                            color="error"
-                                            className="dlt-btn"
-                                            onClick={() => {
-                                                const updatedSplits = splitsArray.filter((_, i) => i !== index);
-                                                onChange(updatedSplits);
-                                            }}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Box>
-                                ))}
-                                <Button 
-                                    variant="contained" 
-                                    onClick={() => onChange([...splitsArray, { type: '', name: '', value: '' }])}
-                                    sx={{ mt: 2 }}
-                                >
-                                    Add Split
-                                </Button>
-                            </Box>
-                        );
-                    },
-                    defaultValue: row.splits || [],
-                }
-            ];
 
             return [...baseFields, ...splitFields];
         }
@@ -414,6 +477,9 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                 onSave={handleSaveChanges}
                 totalFields={totalFields}
                 editDialogProps={editDialogProps}
+                type="report"
+                userID={userID}
+                merchantPartnerSlug={report?.type}
             />
         </Box>
     );

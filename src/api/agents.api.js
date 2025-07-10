@@ -22,6 +22,20 @@ export const getAgents = async (organizationID, authToken) => {
   }
 };
 
+export const getAgentUsingUserId = async (organizationID, authToken, userId) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+    };
+    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/user/${userId}`, { headers });
+    console.log("Agents user:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
 // Fetch a single agent by ID
 export const getAgent = async (organizationID, agentID, authToken) => {
   try {
@@ -98,15 +112,15 @@ export const uploadAgents = async (organizationID, agentsData, authToken) => {
     };
 
     // Log the request details for better tracing
-    console.log("Request URL:", `${ROUTE_BASE_URL}/organizations/${organizationID}/batch`);
-    console.log("Request Headers:", headers);
-    console.log("Request Data:", agentsData);
+    // console.log("Request URL:", `${ROUTE_BASE_URL}/organizations/${organizationID}/batch`);
+    // console.log("Request Headers:", headers);
+    // console.log("Request Data:", agentsData);
 
     // Perform the upload request
     const response = await axios.post(`${ROUTE_BASE_URL}/organizations/${organizationID}/batch`, agentsData, { headers });
 
     // Log the full response for debugging
-    console.log("Upload response:", response);
+    // console.log("Upload response:", response);
 
     return response; // Access data directly for easier handling on the front end
   } catch (error) {

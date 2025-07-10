@@ -5,6 +5,10 @@ import ReusableTable from "../../../../components/general/table/table.component.
 import { FaCheck } from "react-icons/fa";
 import { getAgentSummaryReport, generateAgentSummaryReport, createAgentSummaryReport, updateReport } from '../../../../api/reports.api.js';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
+// Make sure columns is defined before this point
+// Example: import columns from './columns'; or define columns above
 
 const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
   const [summaryReport, setSummaryReport] = useState([]);
@@ -19,6 +23,18 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
   // Extract the monthYear from the URL
   const queryParams = new URLSearchParams(location.search);
   const monthYear = queryParams.get('month');
+
+  const token = localStorage.getItem('authToken');
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken?.user_id || '';
+  const roleId = decodedToken?.roleId || '';
+
+  let userID = '';
+
+  // Add userId to formData if condition is met
+  if (decodedToken && (userId !== '') && (roleId !== 1 && roleId !== 2)) {
+     userID = userId
+  }
 
   useEffect(() => {
     if (authToken && organizationID && monthYear) {
@@ -52,8 +68,27 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
         throw new Error('Invalid response structure: reportData is not an array');
       }
 
+      if (agentReports) {
+        // Separate TOTALS row from other data
+        const totalsRow = agentReports.find(item => item.agentName === "TOTALS");
+        const otherRows = agentReports.filter(item => item.agentName !== "TOTALS");
+  
+        // Sort the data alphabetically by agent name (excluding TOTALS)
+        const sortedData = [...otherRows].sort((a, b) => 
+          a.agentName.localeCompare(b.agentName)
+        );
+  
+        // Add TOTALS back at the end
+        const finalData = [...sortedData];
+        if (totalsRow) {
+          finalData.push(totalsRow);
+        }
+  
+        setSummaryReport(finalData);
+      }
+      
+      // setSummaryReport(agentReports);
       // Set the initial report data and keep it in memory for merging later
-      setSummaryReport(agentReports);
 
     } catch (err) {
       console.error('Error generating agent summary report:', err);
@@ -192,7 +227,26 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
         console.error('Error saving agent summary report:', error);
         alert('Error saving agent summary report. Please check the console for details.');
     }
-};
+  };
+
+  const editDialogProps = {
+    getFields: (row) => {
+        const baseFields = Object.keys(row)
+            .filter(field => field !== 'agentID')
+            .map(field => ({
+                label: field
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, str => str.toUpperCase()),
+                field,
+                type: typeof row[field] === "boolean" ? "boolean" : "text",
+                defaultValue:
+                    typeof row[field] === "number"
+                        ? Number(row[field]).toFixed(2)
+                        : row[field] || "",
+            }));
+        return [...baseFields];
+    }
+  };
 
 
   // Export to CSV function
@@ -200,7 +254,23 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
     const csvHeaders = [
       "Agent ID", "Agent Name", "Transactions", "Sales Amount", "Income", "Expenses", "Net", "Agent Net"
     ];
-    const csvRows = summaryReport.map(item => [
+
+    // Separate TOTALS row from other data
+    const totalsRow = summaryReport.find(item => item.agentName === "TOTALS");
+    const otherRows = summaryReport.filter(item => item.agentName !== "TOTALS");
+
+    // Sort the data alphabetically by agent name (excluding TOTALS)
+    const sortedData = [...otherRows].sort((a, b) => 
+      a.agentName.localeCompare(b.agentName)
+    );
+
+    // Add TOTALS back at the end
+    const finalData = [...sortedData];
+    if (totalsRow) {
+      finalData.push(totalsRow);
+    }
+
+    const csvRows = finalData.map(item => [
       item.agentID,
       item.agentName,
       item.totalTransactions,
@@ -208,7 +278,8 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
       item.totalIncome,
       item.totalExpenses,
       item.totalNet,
-      item.totalAgentNet
+      // Format agent net to 2 decimal places
+      Number(item.totalAgentNet).toFixed(2)
     ]);
 
     const csvContent = [
@@ -227,6 +298,9 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
     URL.revokeObjectURL(url);
   };
 
+  // useEffect(() => {
+ 
+  // }, [summaryReport]);
 
   if (loading) {
     return <div className="agent-summary-report-viewer"><p>Loading...</p></div>;
@@ -235,6 +309,45 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
   if (error) {
     return <div className="agent-summary-report-viewer"><p>{error}</p></div>;
   }
+
+
+  const columns = summaryReport && summaryReport.length > 0
+    ? Object.keys(summaryReport[0])
+        .filter(field => field !== 'agentID') // Exclude agentID if you don't want it as a column
+        .map(field => ({
+          field,
+          label: field
+            .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+            .replace(/^./, str => str.toUpperCase()), // Capitalize first letter
+          ...(field === 'approved' && {
+            render: (approved) =>
+              approved ? <FaCheck color="green" title="Approved" /> : null,
+          }),
+        }))
+  : [];
+
+  // console.log('columns',columns);
+
+  // columns.push({
+  //   field: "approved",
+  //   label: "Approved",
+  //   render: (approved) =>
+  //     approved ? <FaCheck color="green" title="Approved" /> : null,
+  // });
+
+  // columns.push({
+  //   field: "splits",
+  //   label: "Splits",
+  //   render: (splits) => {
+  //     if (!splits || !Array.isArray(splits)) return null;
+  //     return splits.map((split, index) => (
+  //       <div key={index}>
+  //         {`${split.type}: ${split.name} - ${split.value}`}
+  //       </div>
+  //     ));
+  //   },
+  // });
+
   return (
     <Box sx={{ p: 4 }}>
         {/* Reusable Header */}
@@ -283,7 +396,13 @@ const AgentSummaryReportViewerPage = ({ authToken, organizationID }) => {
             selected={selectedRows}
             setSelected={setSelectedRows}
             enableTotals={true}
+            onSave={handleSaveChanges}
             approvalAction={true}
+            type="report"
+            setHasChanges={setHasChanges}
+            userID={userID}
+            editDialogProps={editDialogProps}
+            merchantPartnerSlug='agent-summary-report'
         />
 
         {/* Save Changes Button */}

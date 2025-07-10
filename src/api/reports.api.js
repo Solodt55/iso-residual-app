@@ -18,21 +18,27 @@ export const addReport = async (organizationID, reportData, authToken) => {
 };
 
 export const getReports = async (organizationID, type, authToken) => {
-  console.log('ggggg',organizationID, type, authToken);
+  console.log('getReports called with:', organizationID, type, authToken);
   try {
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
+    let response;
+    
     if (type === 'all') {
-      const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
-      return response.data;
+      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+    } else {
+      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
     }
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
 
-    console.log('responsewwwwwwwwwww',response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Error fetching reports:", error);
+    if (error.response && error.response.status === 404) {
+      // Return empty array for 404 instead of throwing
+      return [];
+    }
     throw error.response?.data || error.message;
   }
 };
@@ -309,6 +315,32 @@ export const createAgentSummaryReport = async (organizationID, reportData, authT
     return response.data;
   } catch (error) {
     console.error("Error creating agent summary report:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateReportDataByType = async (organizationID, type, newMerchants, authToken) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+    
+    const requestBody = {
+      type: type,
+      newMerchants: newMerchants
+    };
+
+    const response = await axios.put(
+      `${ROUTE_BASE_URL}/organizations/${organizationID}/update-report-data`, 
+      requestBody, 
+      { headers }
+    );
+    
+    console.log('Update report data response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating report data by type:", error);
     throw error.response?.data || error.message;
   }
 };

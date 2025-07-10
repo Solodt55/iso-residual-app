@@ -29,11 +29,14 @@ const NeedsUploaded = ({ reports }) => {
       'Merchant Lynx': 'process report',
       'Micamp': 'process report',
       'Payment Advisors': 'process report',
+      'PayBright': 'process report',
       'Shift4': 'process report',
       'Hyfin': 'process report',
       'Rectangle Health': 'process report',
       'TRX': 'process report',
     };
+
+    console.log('reports222',reports);
 
     // Gather processors from reports that have been uploaded
     const uploadedProcessors = [];
@@ -46,13 +49,15 @@ const NeedsUploaded = ({ reports }) => {
       }
     });
 
+    
     // Remove duplicates from uploaded processors
     const uniqueUploadedProcessors = [...new Set(uploadedProcessors)];
-
+    
     // Check for processors that haven't uploaded reports
     const processorsThatNeedUpload = Object.keys(processorReports).filter(
       (processor) => !uniqueUploadedProcessors.includes(processor)
     );
+    console.log('processorsThatNeedUpload',processorsThatNeedUpload);
 
     setProcessorsThatNeedUpload(
       processorsThatNeedUpload.map((processor) => ({

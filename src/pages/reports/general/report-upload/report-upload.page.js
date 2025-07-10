@@ -18,6 +18,7 @@ const ReportUploadPage = ({ authToken, organizationID }) => {
     "Global",
     "Clearent",
     "Payment Advisors",
+    "PayBright",
     "Fiserv Omaha",
     "Fiserv Bin & ICA",
   ];

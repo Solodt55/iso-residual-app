@@ -11,7 +11,7 @@ import TableWithFilters from '../../../general/table/table.component.js';
 import { exportToCSV } from '../../../../utils/export.util.js';
 import { FaCheck } from 'react-icons/fa';
 
-const ProcessorSummaryReportViewer = ({ authToken, organizationID }) => {
+const ProcessorSummaryReportViewer = ({ authToken, organizationID, userID }) => {
     const [summaryReport, setSummaryReport] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,6 +23,24 @@ const ProcessorSummaryReportViewer = ({ authToken, organizationID }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const monthYear = queryParams.get('month');
+
+    // Helper function to sort data alphabetically with totals at end
+    const sortProcessorData = (data) => {
+        if (!Array.isArray(data)) return data;
+        
+        const totalsRows = data.filter(item => 
+            item.processor === "Overall Totals" || item.processor === "Totals"
+        );
+        const otherRows = data.filter(item => 
+            item.processor !== "Overall Totals" && item.processor !== "Totals"
+        );
+        
+        const sortedData = [...otherRows].sort((a, b) => 
+            a.processor.localeCompare(b.processor)
+        );
+        
+        return [...sortedData, ...totalsRows];
+    };
 
     useEffect(() => {
         if (authToken && organizationID && monthYear) {
@@ -49,7 +67,7 @@ const ProcessorSummaryReportViewer = ({ authToken, organizationID }) => {
             if (!Array.isArray(processorReports)) {
                 throw new Error('Invalid response structure: reportData is not an array');
             }
-            setSummaryReport(processorReports);
+            setSummaryReport(sortProcessorData(processorReports));
         } catch (err) {
             console.error('Error generating processor summary report:', err);
             setError('Failed to generate processor summary report');
@@ -181,7 +199,7 @@ const ProcessorSummaryReportViewer = ({ authToken, organizationID }) => {
 
             {/* ✅ Use Reusable Table with Bulk Approve in Actions */}
             <TableWithFilters
-                data={summaryReport}
+                data={sortProcessorData(summaryReport)}
                 setData={setSummaryReport}
                 idField="processor"
                 columns={columns}
@@ -193,6 +211,8 @@ const ProcessorSummaryReportViewer = ({ authToken, organizationID }) => {
                     { name: "Approve", action: handleBulkApprove, disabled: !selectedRows.length }
                 ]}
                 totalFields={["totalTransactions", "totalSalesAmount", "totalIncome", "totalExpenses", "totalNet", "totalAgentNet"]}
+                type="report"
+                userID={userID}
             />
         </div>
     );

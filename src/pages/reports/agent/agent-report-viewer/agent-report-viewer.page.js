@@ -17,6 +17,7 @@ import "./agent-report-viewer.page.css";
 import { use } from "react";
 import { getAgents } from "../../../../api/agents.api.js";
 import { useNavigate,useLocation } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 
 
 const AgentReportViewerPage = ({ organizationID, authToken }) => {
@@ -38,6 +39,44 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
     const monthYear = searchParams.get("month");
     const navigate = useNavigate();
 
+    // Helper function to sort merchant data alphabetically by merchant name
+    const sortMerchantDataAlphabetically = (data) => {
+        return data.map(processorReport => ({
+            ...processorReport,
+            reportData: processorReport.reportData
+                .map(item => {
+                    // Capitalize merchant names
+                    const updatedItem = { ...item };
+                    if (updatedItem["Merchant Name"]) {
+                        updatedItem["Merchant Name"] = updatedItem["Merchant Name"].toUpperCase();
+                    }
+                    if (updatedItem["Merchant DBA"]) {
+                        updatedItem["Merchant DBA"] = updatedItem["Merchant DBA"].toUpperCase();
+                    }
+                    return updatedItem;
+                })
+                .sort((a, b) => {
+                    // Sort alphabetically by merchant name (A to Z)
+                    const field = processorReport.processor === "TRX" ? "Merchant DBA" : "Merchant Name";
+                    const nameA = (a[field] || "").toUpperCase();
+                    const nameB = (b[field] || "").toUpperCase();
+                    return nameA.localeCompare(nameB);
+                })
+        }));
+    };
+
+    const token = localStorage.getItem('authToken');
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken?.user_id || '';
+    const roleId = decodedToken?.roleId || '';
+
+    let userID = '';
+
+    // Add userId to formData if condition is met
+    if (decodedToken && (userId !== '') && (roleId !== 1 && roleId !== 2)) {
+       userID = userId
+    }
+
     useEffect(() => {
         if (authToken && organizationID && agentID && monthYear) {
             fetchReports();
@@ -49,7 +88,7 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
     useEffect(() => {
         
         console.log('Fetching reports...');
-        console.log('generatedReportData:', generatedReportData);
+        console.log('generatedReportDataSS:', generatedReportData);
         console.log('dbReport:', dbReport);
         console.log('mergedData:', mergedData);
     }, [mergedData, generatedReportData, dbReport]);
@@ -73,16 +112,22 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
             setAgent(agentData);
     
             const generatedReportData = generatedResponse.data?.reportData || [];
-            setGeneratedReportData(generatedReportData);
+            
+            // Process and sort the generated report data alphabetically
+            const processedGeneratedData = sortMerchantDataAlphabetically(generatedReportData);
+            setGeneratedReportData(processedGeneratedData);
             setDbReport(savedResponse?.data || null);
     
             // Merge the reports
-            if (generatedReportData.length) {
-                console.log('arg1:', generatedReportData);
+            if (processedGeneratedData.length) {
+                console.log('arg1:', processedGeneratedData);
                 console.log('arg2:', savedResponse?.data?.reportData || null);
-                const merged = mergeReports(generatedReportData, savedResponse?.data?.reportData || null);
-                setMergedData(merged);
-                console.log("Merged data:", merged);
+                const merged = mergeReports(processedGeneratedData, savedResponse?.data?.reportData || null);
+                
+                // Process and sort the merged data as well
+                const processedMergedData = sortMerchantDataAlphabetically(merged);
+                setMergedData(processedMergedData);
+                console.log("Merged data:", processedMergedData);
             } else {
                 console.warn("Generated report is empty. No data to merge.");
                 setMergedData([]);
@@ -235,7 +280,7 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
     const getProcessorType = (processor) => processorTypeMap[processor] || 'type1';
 
     const exportToCSV = () => {
-        if (!generatedReportData || !generatedReportData.length) {
+        if (!sortedReportData || !sortedReportData.length) {
             console.error("No generated report data available.");
             return;
         }
@@ -255,21 +300,42 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
             return stringValue;
         };
     
-        generatedReportData.forEach((processorReport) => {
+        sortedReportData.forEach((processorReport) => {
             // Ensure processorReport and its reportData are valid
             if (!processorReport || !processorReport.processor || !processorReport.reportData || !processorReport.reportData.length) {
                 console.error("Invalid processor report structure:", processorReport);
                 return;
             }
     
+            // Process and sort the report data for export
+            const processedReportData = processorReport.reportData
+                .map(item => {
+                    // Ensure merchant names are capitalized
+                    const updatedItem = { ...item };
+                    if (updatedItem["Merchant Name"]) {
+                        updatedItem["Merchant Name"] = updatedItem["Merchant Name"].toUpperCase();
+                    }
+                    if (updatedItem["Merchant DBA"]) {
+                        updatedItem["Merchant DBA"] = updatedItem["Merchant DBA"].toUpperCase();
+                    }
+                    return updatedItem;
+                })
+                .sort((a, b) => {
+                    // Sort alphabetically by merchant name (A to Z)
+                    const field = processorReport.processor === "TRX" ? "Merchant DBA" : "Merchant Name";
+                    const nameA = (a[field] || "").toUpperCase();
+                    const nameB = (b[field] || "").toUpperCase();
+                    return nameA.localeCompare(nameB);
+                });
+    
             // ✅ Extract headers dynamically, ensuring the reportData[0] exists
-            const headers = Object.keys(processorReport.reportData[0] || {}).filter(header => header !== "approved");
+            const headers = Object.keys(processedReportData[0] || {}).filter(header => header !== "approved");
     
             // ✅ Add processor name and dynamic headers
             csvRows.push([escapeCSVValue(processorReport.processor)]); 
             csvRows.push(headers.map(escapeCSVValue).join(',')); // Escape headers as well
     
-            processorReport.reportData.forEach((item) => {
+            processedReportData.forEach((item) => {
                 // ✅ Corrected the handling for both strings and numbers
                 const parseValue = (value) => {
                     if (typeof value === "boolean") return value; // Keep booleans as is
@@ -303,12 +369,12 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                     return ''; // ✅ Skip these non-numeric columns
                 }
     
-                const isNumericColumn = processorReport.reportData.some(
+                const isNumericColumn = processedReportData.some(
                     row => !isNaN(parseFloat(row[header]))
                 );
     
                 if (isNumericColumn) {
-                    const total = processorReport.reportData.reduce((sum, row) => {
+                    const total = processedReportData.reduce((sum, row) => {
                         const value = parseFloat(row[header]) || 0;
                         return sum + value;
                     }, 0);
@@ -333,6 +399,16 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
         a.click();
         document.body.removeChild(a);
     };
+
+
+    // Sort the generatedReportData alphabetically by processor name
+    const sortedReportData = [...generatedReportData].sort((a, b) =>
+        a.processor.localeCompare(b.processor)
+    );
+    // Sort mergedData the same way as sortedReportData
+    const sortedMergedData = [...mergedData].sort((a, b) =>
+        a.processor.localeCompare(b.processor)
+    );
     
     if (loading) {
         return (
@@ -367,27 +443,39 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                 onChange={handleTabChange}
                 variant="scrollable"
                 scrollButtons={true}
-                sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}
+                // sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}
+                sx={{ 
+                    borderBottom: 1, 
+                    borderColor: "divider", 
+                    mb: 3,
+                    '& .MuiTab-root': {
+                        color: '#000000',
+                        '&.Mui-selected': {
+                        color: '#000000',
+                        },
+                    },
+                }}
             >
-                {generatedReportData.map((processorReport, index) => (
+                {sortedReportData.map((processorReport, index) => (
                     <Tab key={index} label={processorReport.processor} />
                 ))}
             </Tabs>
             <Box>
-                {generatedReportData[activeProcessor] && (
+                {sortedReportData[activeProcessor] && (
                     <AgentReportViewer
                         authToken={authToken}
                         organizationID={organizationID}
                         agentID={agentID}
                         monthYear={monthYear}
-                        processor={generatedReportData[activeProcessor].processor}
-                        mergedData={[mergedData[activeProcessor]]}
+                        processor={sortedReportData[activeProcessor].processor}
+                        mergedData={[sortedMergedData[activeProcessor]]}
                         onSave={handleSaveChanges}
                         setMergedData={setMergedData} // Pass this prop
                         setHasChanges={setHasChanges} // Pass this prop
                         hasChanges={hasChanges} // Pass this prop
                         agents={agents}
                         updatedMerchantData={handleUpdatedMerchant}
+                        userID={userID}
                     />
                 )}
             </Box>

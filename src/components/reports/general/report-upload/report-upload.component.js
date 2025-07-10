@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import the hook
-import { addReport } from '../../../../api/reports.api.js';
+import { addReport, updateReportDataByType } from '../../../../api/reports.api.js';
 import './report-upload.component.css';
+import { jwtDecode } from 'jwt-decode';
+import { getAgents } from '../../../../api/agents.api.js';
 
 const ReportUpload = ({ authToken, organizationID }) => {
   const processors = [
@@ -116,10 +118,74 @@ const ReportUpload = ({ authToken, organizationID }) => {
       formData.append('month', selectedMonth);
       formData.append('year', selectedYear);
 
+      // Get token and decode it
+      const token = localStorage.getItem('authToken');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken?.user_id || '';
+      const roleId = decodedToken?.roleId || '';
+
+      // Add userId to formData if condition is met
+      if (decodedToken && (userId !== '') && (roleId !== 1 && roleId !== 2)) {
+        formData.append('userID', userId);
+      }
+
       const response = await addReport(organizationID, formData, authToken);
       console.log('API Response:', response);
 
       if (response && response.status === 200) {
+
+        // Fetch and console.log all agents after successful upload
+        //  try {
+        //   const agentsResponse = await getAgents(organizationID, authToken);
+        //   console.log("All agents after upload:", agentsResponse);
+
+        //   // Extract all clients from all agents and format them
+        //   const allMerchants = [];
+          
+        //   if (agentsResponse && Array.isArray(agentsResponse.agents)) {
+        //     agentsResponse.agents.forEach(agent => {
+        //       if (agent.clients && Array.isArray(agent.clients)) {
+        //         agent.clients.forEach(client => {
+        //           if (client.merchantID && client.merchantName) {
+        //             allMerchants.push({
+        //               "Merchant Id": client.merchantID,
+        //               "Merchant Name": client.merchantName,
+        //               "Branch ID": client.branchID || ""
+        //             });
+        //           }
+        //         });
+        //       }
+        //     });
+        //   }
+
+        //   // Create the formatted structure
+        //   const formattedMerchants = {
+        //     "type": "processor",
+        //     "newMerchants": allMerchants
+        //   };
+
+        //   console.log("Formatted merchants data:", formattedMerchants);
+        //   console.log("Total merchants found:", allMerchants.length);
+
+        //   // Call the API to update report data with the formatted merchants
+        //   if (allMerchants.length > 0) {
+        //     try {
+        //       const updateResponse = await updateReportDataByType(
+        //         organizationID, 
+        //         "processor", 
+        //         allMerchants, 
+        //         authToken
+        //       );
+        //       console.log("Report data update response:", updateResponse);
+        //     } catch (updateError) {
+        //       console.error("Error updating report data:", updateError);
+        //     }
+        //   }
+
+        // } catch (agentError) {
+        //   console.error("Error fetching agents:", agentError);
+        // }
+
         setUploadStatus('Files uploaded successfully!');
         setLoading(false); // Hide loading popup
         navigate('/reports/all'); // Redirect after successful upload

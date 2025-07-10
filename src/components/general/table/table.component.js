@@ -42,7 +42,8 @@ const TableWithFilters = ({
   editDialogProps,
   agentDetails,
   merchantPartnerSlug,
-  type
+  type,
+  userID
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -124,24 +125,39 @@ const TableWithFilters = ({
   };
 
   const handleSave = (updatedRow) => {
-    // console.log('updatedRow',updatedRow);
+    console.log('updatedRow',updatedRow);
+    // return false;
+    // console.log('data',data);
+    // return false;
     // const updatedData = data.map(row =>
     //   row["merchantID"] === updatedRow["merchantID"] ? updatedRow : row
     // );
     let updatedData = '';
+    // console.log('data',data);
 
     if(merchantPartnerSlug === 'merchantPartnerSlug'){
       updatedData = data.map(row =>
       row["merchantID"] === updatedRow["merchantID"] ? updatedRow : row
       );
+    }else if(merchantPartnerSlug === 'billing'){
+      updatedData = data.map(row =>
+        row["Agent Id"] === updatedRow["Agent Id"] ? updatedRow : row
+      );
+    }else if(merchantPartnerSlug === 'agent-summary-report'){
+      updatedData = data.map(row =>
+        row["agentName"] === updatedRow["agentName"] ? updatedRow : row
+      );
+    }else if(merchantPartnerSlug === 'ar'){
+      updatedData = data.map(row =>
+        row["customerID"] === updatedRow["customerID"] ? updatedRow : row
+      );
     }else{
        updatedData = data.map(row =>
        row["Merchant Id"] === updatedRow["Merchant Id"] ? updatedRow : row
     );
-
     }
 
-    // console.log('updatedData',updatedData);
+    console.log('updatedData',updatedData);
     // console.log('updatedRow',updatedRow);
     // console.log('data',data);
     // return false;
@@ -232,7 +248,7 @@ const TableWithFilters = ({
   };
 
   const sortedData = useMemo(() => {
-    if (type === 'bank-report' && sortKey === 'Merchant Id') {
+    if (type === 'report' && sortKey === 'Merchant Id') {
       return [...filteredData].sort((a, b) => {
         if (a['Merchant Id'] < b['Merchant Id']) return sortOrder === 'asc' ? -1 : 1;
         if (a['Merchant Id'] > b['Merchant Id']) return sortOrder === 'asc' ? 1 : -1;
@@ -272,6 +288,7 @@ const TableWithFilters = ({
         onExport={handleExportToCSV}
         onDelete={handleBulkDelete}
         onTotalsCalculated={(calculatedTotals) => setTotals(calculatedTotals)}
+        userID={userID}
       />
       <TableContainer >
 
@@ -290,8 +307,8 @@ const TableWithFilters = ({
               {columns.map((col) => (
                 <TableCell align="center" key={col.field} className="border-b px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" style={col.field === 'Merchant Id' ? { minWidth: 120, paddingRight: 0 } : {}}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={type === 'bank-report' ? { textTransform: "uppercase" } : {}}>
-                      {type === 'bank-report'
+                    <span style={type === 'report' ? { textTransform: "uppercase" } : {}}>
+                      {type === 'report'
                         ? col.label.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()
                         : col.label}
                     </span>
@@ -299,7 +316,7 @@ const TableWithFilters = ({
                       style={{ marginLeft: 8, cursor: 'pointer' }} 
                       onClick={() => handleSort(col.field)}
                     >
-                    {type === 'bank-report' && (
+                    {type === 'report' && (
                       sortKey === col.field ? (
                         sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />
                       ) : <FaSort />
@@ -308,7 +325,7 @@ const TableWithFilters = ({
                   </Box>
                 </TableCell>
               ))}
-              {approvalAction && <TableCell align="center">Actions</TableCell>}
+              {approvalAction && userID === '' && <TableCell align="center">Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -333,7 +350,8 @@ const TableWithFilters = ({
                         }
                     </TableCell>
                 ))}
-                  {approvalAction && (
+
+                  {approvalAction && userID === '' && (
                     <TableCell align="center" className="hrtd">
                       <ActionsColumn
                         onEdit={() => handleEdit(row[idField])}
