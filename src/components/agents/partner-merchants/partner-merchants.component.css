@@ -45,11 +45,11 @@
 
 /* Blue Pencil (Edit Icon) */
 .edit-icon {
-  color: #facc15; /* Blue color */
+  color: #69932f;
 }
 
 .edit-icon:hover {
-  color: #facc15; /* Darker blue on hover */
+  color: #69932f;
 }
 
 /* Red Trashcan Icon (Delete Button) */
@@ -70,22 +70,22 @@
 }
 
 .pagination-btn {
-  background-color: var(--background-color);
-  border: 1px solid var(--separator-color);
-  color: var(--text-color);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  color: #69932f;
   padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .pagination-btn.active {
-  background-color: #facc15;
-  color: white;
-  border-color: #facc15;
+  background-color: #69932f;
+  color: #fff;
+  border-color: #69932f;
 }
 
-.pagination-btn:hover {
-  background-color: #facc15;
-  color: #000;
+.pagination-btn:not(.active):hover {
+  background-color: #eaf3de;
+  color: #69932f;
 }

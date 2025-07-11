@@ -435,9 +435,25 @@ useEffect(() => {
     <Box className="agent-report-viewer-page">
       <Header title={`Bank Summary Report - ${monthYear}`} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button variant="contained" color="primary" onClick={exportToCSV}>
+        {/* <Button variant="contained" color="primary" onClick={exportToCSV}>
+          Export Full Report
+        </Button> */}
+
+        <Button
+          variant="contained"
+          onClick={exportToCSV}
+          sx={{
+            backgroundColor: '#69932f',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: '#5a8028', // optional: darker shade for hover
+            },
+          }}
+        >
           Export Full Report
         </Button>
+
+
       </Box>
 
       <Tabs
@@ -451,9 +467,12 @@ useEffect(() => {
           borderColor: "divider", 
           mb: 3,
           '& .MuiTab-root': {
-            color: '#000000',
+            color: '#000000', // default text color
+            '&:hover': {
+              color: '#ffffff', // hover text color
+            },
             '&.Mui-selected': {
-              color: '#000000',
+              color: '#fff !important', // force active tab text to white
             },
           },
         }}
@@ -462,6 +481,7 @@ useEffect(() => {
           <Tab key={index} label={processorReport.processor} />
         ))}
       </Tabs>
+      
       <Box>
         {sortedReportData[activeProcessor] &&
           sortedMergedData[activeProcessor] && (

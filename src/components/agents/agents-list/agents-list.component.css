@@ -24,9 +24,9 @@
 
 .add-agent-button,
 .upload-agent-button {
-  background-color: var(--accent-color);
+  background-color: #69932f;
+  color: #fff;
   padding: 10px 20px;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -36,7 +36,8 @@
 
 .add-agent-button:hover,
 .upload-agent-button:hover {
-  background-color: var(--accent-color2);
+  background-color: #69932f;
+  color: #fff;
 }
 
 
@@ -111,14 +112,16 @@
   font-size: 1rem;
 }
 
-.pagination-btn:disabled {
-  background-color: var(--disabled-color);
+.pagination-btn:disabled,
+.pagination-btn:disabled:hover {
+  background-color: #69932f;
+  color: #fff;
   cursor: not-allowed;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background-color: #facc15;
-  color: #000;
+  background-color: #69932f;
+  color: #fff;
 }
 
 .pagination-controls span {
@@ -234,9 +237,9 @@
 /* Add agent and upload agent buttons */
 .add-agent-button,
 .upload-agent-button {
-  background-color: var(--accent-color);
+  background-color: #69932f;
+  color: #fff;
   padding: 10px 20px;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -245,7 +248,8 @@
 
 .add-agent-button:hover,
 .upload-agent-button:hover {
-  background-color: var(--accent-color2);
+  background-color: #69932f;
+  color: #fff;
 }
 
 
@@ -286,9 +290,9 @@
 
 .add-agent-button,
 .upload-agent-button {
-  background-color: var(--accent-color);
+  background-color: #69932f;
+  color: #fff;
   padding: 10px 20px;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -298,6 +302,7 @@
 
 .add-agent-button:hover,
 .upload-agent-button:hover {
-  background-color: var(--accent-color2);
+  background-color: #69932f;
+  color: #fff;
 }
 

@@ -16,6 +16,7 @@
     box-shadow: 0 0 5px var(--shadow-color);
     min-width: 150px;
     text-align: center;
+    border: 1px solid #69932f33;
 }
 
 .total-label {
@@ -25,7 +26,7 @@
 }
 
 .total-value {
-    color: #eab308;
+    color: #69932f;
     font-size: 1.2rem;
     font-weight: bold;
 }

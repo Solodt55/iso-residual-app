@@ -132,7 +132,7 @@ const AgentUploader = ({ authToken, organizationID }) => {
           </div>
         )}
 
-        <button type="submit" className="upload-btn w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50">
+        <button type="submit" className="upload-btn w-full bg-[#69932f] hover:bg-[#69932f] text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50">
           Upload File
         </button>
       </form>

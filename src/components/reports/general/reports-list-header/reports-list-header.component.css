@@ -48,3 +48,14 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+
+.go-to-upload-btn {
+  background-color: #69932f !important;
+  color: #fff !important;
+  border: none !important;
+  transition: background 0.2s, color 0.2s;
+}
+.go-to-upload-btn:hover {
+  background: #8ba85a !important;
+  color: #fff !important;
+}

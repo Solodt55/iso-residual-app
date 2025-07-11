@@ -332,7 +332,13 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
             />
           </div>
           {error && <p className="error-message">{error}</p>}
-          <button type="submit" className='w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50'>Login</button>
+          <button
+            type="submit"
+            className='w-full bg-[#69932f] hover:bg-[#69932f] text-white py-3 rounded font-medium uppercase transition duration-200 disabled:opacity-50'
+            style={{ backgroundColor: '#69932f', color: '#fff', border: 'none' }}
+          >
+            Login
+          </button>
         </form>
         <p className='mt-1 text-center text-xs text-yellow-400/60 btn-new'>
           Don't have an account? <Link to="/signup">Sign up here</Link>

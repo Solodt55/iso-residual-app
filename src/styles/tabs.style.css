@@ -18,8 +18,9 @@
 }
 
 .tab.active {
-    background-color: var(--section-background);
-    border-bottom: 2px solid var(--text-color);
+    background-color: #69932f;
+    color: #fff;
+    border-bottom: 2px solid #69932f;
     font-weight: bold;
 }
 

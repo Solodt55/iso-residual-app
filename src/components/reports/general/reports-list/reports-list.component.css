@@ -134,12 +134,12 @@ button {
 }
 
 .pagination button.active {
-    background-color: #facc15;
+    background-color: #69932f;
     color: #000;
 }
 
 .pagination button:hover {
-    background-color:#facc15;
+    background-color: #69932f;
 }
 
 /* Override default react-confirm-alert styles to match the theme */

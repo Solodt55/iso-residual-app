@@ -89,6 +89,10 @@ section {
   }
 }
 
+.background-green{
+  background-color: #69932f;
+}
+
 
 
 /* EULA Modal Light Theme Enhancements */
@@ -152,12 +156,12 @@ section {
 }
 
 .eula-modal-footer .agree-btn {
-  background: #facc15;
+  background: #69932f;
   color: #fff;
 }
 
 .eula-modal-footer .agree-btn:disabled {
-  background: #fde68a;
+  background: #8ba85a;
   color: #fff;
   opacity: 0.7;
   cursor: not-allowed;
@@ -230,7 +234,7 @@ body[data-theme="dark"] .total-field {
   text-transform: none !important;
   font-weight: 700 !important;
   font-family: system-ui;
-  background: #facc15 !important;
+  background: #69932f !important;
 }
 .pop-form [aria-modal="true"] input {
   color: rgb(255 255 255 / 87%);
@@ -295,7 +299,7 @@ body[data-theme="dark"] .css-1ghfbj4 {
 }
 button.css-5pf1h4-MuiButtonBase-root-MuiButton-root,
 button.css-5pf1h4 {
-  background: #facc15!important;
+  background: #69932f!important;
   color: #000;
   font-weight: 700;
 }
@@ -345,7 +349,7 @@ td.MuiTableCell-root.MuiTableCell-sizeMedium.MuiTablePagination-root.css-12dojyv
   background: transparent;
 }
 .hrtd button svg {
-  fill: #facc15!important;
+  fill: #69932f!important;
 }
 .tb-main tr th, .tb-main tr td {
   background: transparent;
@@ -417,14 +421,14 @@ body[data-theme="dark"] .input {
 }
 button.MuiButtonBase-root.MuiTab-root.MuiTab-textColorPrimary.Mui-selected.css-1usuzwp-MuiButtonBase-root-MuiTab-root,
 button.MuiButtonBase-root.MuiTab-root.MuiTab-textColorPrimary.Mui-selected.css-1usuzwp {
-  background: #facc15;
+  background: #69932f;
   color: #000;
-  border-color: #facc15 !important;
+  border-color: #69932f !important;
 }
 .css-1qltlow-MuiTabs-indicator,
 .css-1qltlow {
 
-  background-color: #facc15!important;
+  background-color: #69932f!important;
 }
 button.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary.css-1abvrni-MuiButtonBase-root-MuiButton-root,
 button.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary.css-1abvrni  {
@@ -432,10 +436,10 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-contained
   text-transform: none !important;
   font-weight: 700 !important;
   font-family: system-ui;
-  background: #facc15 !important;
+  background: #69932f !important;
 }
 button.btn-view svg {
-  color: #facc15 !important;
+  color: #69932f !important;
 }
 .MuiTabs-root.css-1artyiy-MuiTabs-root .css-1usuzwp-MuiButtonBase-root-MuiTab-root,
 .MuiTabs-root.css-1artyiy .css-1usuzwp {
@@ -455,10 +459,10 @@ button.delete-btn:hover {
   text-transform: none !important;
   font-weight: 700 !important;
   font-family: system-ui ;
-  background: #facc15 !important;
+  background: #69932f !important;
 }
 .cncl {
-  color: #facc15!important;
+  color: #69932f!important;
   font-weight: 600!important;
   text-transform: none!important;
 }
@@ -682,12 +686,12 @@ body[data-theme="dark"] .agent-upload-container .upload-btn {
   color: #000;
 }
 body[data-theme="dark"] .delete-button, body[data-theme="dark"]  .save-button {
-  background: #facc15;
+  background: #69932f;
   color: #000;
   font-weight: 500;
 }
 body[data-theme="dark"] .save-button, body[data-theme="dark"] .toggle-password-button {
-  background: #facc15;
+  background: #69932f;
   color: #000;
   font-weight: 500;
 }
@@ -716,14 +720,14 @@ body[data-theme=dark] [aria-modal=true] input {
   color: #fff;
 }
 body[data-theme="dark"] [aria-modal=true] button {
-  background: #facc15 !important;
+  background: #69932f !important;
   color: #000 !important;
   font-family: system-ui;
   font-weight: 700 !important;
   text-transform: none !important;
 }
 .export-btn, .re-audit-btn {
-  background: #facc15;
+  background: #69932f;
   color: #000;
 }
 body[data-theme="dark"] .pagination-m svg {
@@ -746,7 +750,7 @@ body[data-theme="dark"] .add-user-button {
   font-weight: 500;
 }
 body[data-theme="dark"] .manage-team-button:hover, body[data-theme="dark"] .add-user-button:hover {
-  background: #facc15;
+  background: #69932f;
 }
 body[data-theme="dark"] .pop-form [aria-modal=true] input[type="checkbox"] {
   color: #18181b;
@@ -784,7 +788,7 @@ body[data-theme="dark"] .pop-form [aria-modal=true] input[type="checkbox"] {
   --tw-ring-inset: ;
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
-  --tw-ring-color: #facc15;
+  --tw-ring-color: #69932f;
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
@@ -838,7 +842,7 @@ body[data-theme="dark"] .pop-form [aria-modal=true] input[type="checkbox"] {
   --tw-ring-inset: ;
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
-  --tw-ring-color:#facc15;
+  --tw-ring-color:#69932f;
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
@@ -2101,11 +2105,11 @@ select {
 
 .border-yellow-400 {
   --tw-border-opacity: 1;
-  border-color: rgb(250 204 21 / var(--tw-border-opacity, 1))
+  border-color: rgb(105 147 47 / var(--tw-border-opacity, 1))
 }
 
 .border-yellow-400\/20 {
-  border-color: #facc1533
+  border-color: #69932f33
 }
 
 .border-zinc-300 {
@@ -2230,11 +2234,11 @@ select {
 
 .bg-yellow-400 {
   --tw-bg-opacity: 1;
-  background-color: rgb(250 204 21 / var(--tw-bg-opacity, 1))
+  background-color: rgb(105 147 47 / var(--tw-bg-opacity, 1))
 }
 
 .bg-yellow-400\/10 {
-  background-color: #facc151a
+  background-color: #69932f1a
 }
 
 .bg-yellow-500 {
@@ -2599,11 +2603,11 @@ select {
 
 .text-yellow-400 {
   --tw-text-opacity: 1;
-  color: rgb(250 204 21 / var(--tw-text-opacity, 1))
+  color: rgb(105 147 47 / var(--tw-text-opacity, 1))
 }
 
 .text-yellow-400\/60 {
-  color: #facc1599
+  color: #69932f99
 }
 
 .text-yellow-500 {
@@ -2725,7 +2729,7 @@ select {
 
 .hover\:border-yellow-400:hover {
   --tw-border-opacity: 1;
-  border-color: rgb(250 204 21 / var(--tw-border-opacity, 1))
+  border-color: rgb(105 147 47 / var(--tw-border-opacity, 1))
 }
 
 .hover\:bg-black\/80:hover {
@@ -2853,7 +2857,7 @@ select {
 
 .hover\:text-yellow-400:hover {
   --tw-text-opacity: 1;
-  color: rgb(250 204 21 / var(--tw-text-opacity, 1))
+  color: rgb(105 147 47 / var(--tw-text-opacity, 1))
 }
 
 .hover\:text-yellow-500:hover {
@@ -2886,7 +2890,7 @@ select {
 
 .focus\:border-yellow-400:focus {
   --tw-border-opacity: 1;
-  border-color: rgb(250 204 21 / var(--tw-border-opacity, 1))
+  border-color: rgb(105 147 47 / var(--tw-border-opacity, 1))
 }
 
 .focus\:placeholder-gray-400:focus::-moz-placeholder {
@@ -2932,7 +2936,7 @@ select {
 
 .focus\:ring-yellow-400:focus {
   --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(250 204 21 / var(--tw-ring-opacity, 1))
+  --tw-ring-color: rgb(105 147 47 / var(--tw-ring-opacity, 1))
 }
 
 .focus\:ring-yellow-500:focus {
@@ -2963,7 +2967,7 @@ select {
 
 .group:hover .group-hover\:text-yellow-400 {
   --tw-text-opacity: 1;
-  color: rgb(250 204 21 / var(--tw-text-opacity, 1))
+  color: rgb(105 147 47 / var(--tw-text-opacity, 1))
 }
 
 .group:hover .group-hover\:opacity-100 {
@@ -3022,4 +3026,11 @@ select {
       padding-left: 2rem;
       padding-right: 2rem
   }
+}
+
+body[data-theme="light"] .MuiDialog-paper, 
+body[data-theme="light"] .MuiDialogContent-root, 
+body[data-theme="light"] .MuiDialogTitle-root {
+  background: #fff !important;
+  color: #222 !important;
 }

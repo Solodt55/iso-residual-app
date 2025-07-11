@@ -4,8 +4,8 @@
 }
 
 .export-button {
-    background-color: #ff9800;
-    color: white;
+    background-color: #69932f !important;
+    color: #fff !important;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -15,5 +15,6 @@
 }
 
 .export-button:hover {
-    background-color: #e68900;
+    background-color: #69932f !important;
+    color: #fff !important;
 }

@@ -74,7 +74,7 @@ const NeedsUploaded = ({ reports }) => {
   const totalPages = Math.ceil(processorsThatNeedUpload.length / reportsPerPage);
 
   return (
-    <div className="needs-upload-container bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20 b-maine-wrap">
+    <div className="needs-upload-container bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-[#69932f]/20 b-maine-wrap">
       <h3 className='text-lg font-semibold text-white mb-4'>Reports Needing Upload</h3>
       {processorsThatNeedUpload.length > 0 ? (
         <>
@@ -91,7 +91,7 @@ const NeedsUploaded = ({ reports }) => {
             {Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index}
-                className={`pagination-btn shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 ${index + 1 === currentPage ? 'active' : ''}`}
+                className={`pagination-btn shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f] ${index + 1 === currentPage ? 'active' : ''}`}
                 onClick={() => handlePageChange(index + 1)}
               >
                 {index + 1}
@@ -101,7 +101,7 @@ const NeedsUploaded = ({ reports }) => {
 
           {/* Upload Button */}
           <div className="upload-button-container">
-            <button className="upload-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400" onClick={goToUploader}>
+            <button className="upload-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]" onClick={goToUploader}>
               Upload Missing Reports
             </button>
           </div>

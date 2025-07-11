@@ -158,11 +158,11 @@ const AgentsList = ({ organizationID, authToken }) => {
         <div className="actions-container">
          {(!roleId || roleId === 1 || roleId === 2) && (
             <Link to="/agents/add-agent" className="add-agent-link">
-              <button className="add-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Add New Agent</button>
+              <button className="add-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]">Add New Agent</button>
             </Link>
           )}
           <Link to="/agents/upload" className="upload-agent-link">
-            <button className="upload-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">Upload Merchant Reports</button>
+            <button className="upload-agent-button text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]">Upload Merchant Reports</button>
           </Link>
         </div>
 

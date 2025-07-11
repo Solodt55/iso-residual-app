@@ -282,7 +282,7 @@ const AddAgent = ({organizationID, authToken}) => {
           </Typography>
         )}
 
-        <button type="submit" className="submit-button w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50">
+        <button type="submit" className="submit-button w-full bg-[#69932f] hover:bg-[#69932f] text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50">
           Add Agent
         </button>
       </form>

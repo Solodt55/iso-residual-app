@@ -38,7 +38,12 @@ const ReportsListHeader = ({
         <div className="reports-header">
             <div className="header">
                 <h2 className='text-lg font-semibold text-white mb-4'>{reportType.charAt(0).toUpperCase() + reportType.slice(1)} Reports</h2>
-                <button onClick={handleUploadClick} className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400'>Go to Report Upload</button>
+                <button onClick={handleUploadClick}
+                className="text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]"
+                style={{ backgroundColor: '#69932f' }}
+                >
+                  Go to Report Upload
+                </button>
             </div>
 
             <div className="filters">
@@ -96,33 +101,43 @@ const ReportsListHeader = ({
                                 className="react-select-container"
                                 classNamePrefix="react-select"
                                 styles={{
-                                    control: (provided) => ({
+                                    control: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: '#1a1a1a',
-                                        borderColor: '#444',
-                                        color: '#fff',
-                                        minHeight: '38px', // matches Bootstrap dropdown height
+                                        backgroundColor: state.isFocused ? '#fff' : '#fafafa',
+                                        borderColor: state.isFocused ? '#69932f' : '#d1d5db',
+                                        color: '#333',
+                                        minHeight: '38px',
                                         paddingLeft: '8px',
                                         padding: '4px',
-                                        fontSize: '14px',
                                         fontSize: '16px',
-                                        boxShadow: 'none',
+                                        boxShadow: state.isFocused ? '0 0 0 2px #69932f33' : 'none',
+                                        outline: state.isFocused ? '2px solid #69932f' : 'none',
                                     }),
                                     singleValue: (provided) => ({
                                         ...provided,
-                                        color: '#ccc',
+                                        color: '#333',
                                     }),
                                     menu: (provided) => ({
                                         ...provided,
-                                        backgroundColor: '#1a1a1a',
-                                        maxHeight: 'none', // removes scroll
-                                        color: '#fff',
+                                        backgroundColor: '#fff',
+                                        maxHeight: 'none',
+                                        color: '#333',
                                         zIndex: 9999,
+                                        border: '1px solid #d1d5db',
+                                        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: state.isFocused ? '#333' : '#1a1a1a',
-                                        color: '#fff',
+                                        backgroundColor: state.isSelected
+                                            ? '#69932f'
+                                            : state.isFocused
+                                            ? '#e6f4d7'
+                                            : '#fff',
+                                        color: state.isSelected
+                                            ? '#fff'
+                                            : state.isFocused
+                                            ? '#333'
+                                            : '#333',
                                         padding: '10px',
                                         cursor: 'pointer',
                                     }),
@@ -130,9 +145,9 @@ const ReportsListHeader = ({
                                         ...provided,
                                         color: '#888',
                                     }),
-                                    dropdownIndicator: (provided) => ({
+                                    dropdownIndicator: (provided, state) => ({
                                         ...provided,
-                                        color: '#888',
+                                        color: state.isFocused ? '#69932f' : '#888',
                                     }),
                                     indicatorSeparator: () => ({
                                         display: 'none',
@@ -160,32 +175,43 @@ const ReportsListHeader = ({
                                 className="react-select-container"
                                 classNamePrefix="react-select"
                                 styles={{
-                                    control: (provided) => ({
+                                    control: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: '#1a1a1a',
-                                        borderColor: '#444',
-                                        color: '#fff',
-                                        minHeight: '38px', // matches Bootstrap dropdown height
+                                        backgroundColor: state.isFocused ? '#fff' : '#fafafa',
+                                        borderColor: state.isFocused ? '#69932f' : '#d1d5db',
+                                        color: '#333',
+                                        minHeight: '38px',
                                         paddingLeft: '8px',
                                         padding: '4px',
                                         fontSize: '16px',
-                                        boxShadow: 'none',
+                                        boxShadow: state.isFocused ? '0 0 0 2px #69932f33' : 'none',
+                                        outline: state.isFocused ? '2px solid #69932f' : 'none',
                                     }),
                                     singleValue: (provided) => ({
                                         ...provided,
-                                        color: '#ccc',
+                                        color: '#333',
                                     }),
                                     menu: (provided) => ({
                                         ...provided,
-                                        backgroundColor: '#1a1a1a',
-                                        maxHeight: 'none', // removes scroll
-                                        color: '#fff',
+                                        backgroundColor: '#fff',
+                                        maxHeight: 'none',
+                                        color: '#333',
                                         zIndex: 9999,
+                                        border: '1px solid #d1d5db',
+                                        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: state.isFocused ? '#333' : '#1a1a1a',
-                                        color: '#fff',
+                                        backgroundColor: state.isSelected
+                                            ? '#69932f'
+                                            : state.isFocused
+                                            ? '#e6f4d7'
+                                            : '#fff',
+                                        color: state.isSelected
+                                            ? '#fff'
+                                            : state.isFocused
+                                            ? '#333'
+                                            : '#333',
                                         padding: '10px',
                                         cursor: 'pointer',
                                     }),
@@ -193,9 +219,9 @@ const ReportsListHeader = ({
                                         ...provided,
                                         color: '#888',
                                     }),
-                                    dropdownIndicator: (provided) => ({
+                                    dropdownIndicator: (provided, state) => ({
                                         ...provided,
-                                        color: '#888',
+                                        color: state.isFocused ? '#69932f' : '#888',
                                     }),
                                     indicatorSeparator: () => ({
                                         display: 'none',

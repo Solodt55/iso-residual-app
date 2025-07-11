@@ -44,6 +44,11 @@ function App() {
   const [authToken, setAuthToken] = useState(null);
 
   useEffect(() => {
+    document.body.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }, []);
+
+  useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
   
     if (storedToken) {

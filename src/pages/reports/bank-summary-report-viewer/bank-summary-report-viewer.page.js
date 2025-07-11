@@ -286,7 +286,13 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
                 title={`Bank Summary Report - ${monthYear}`}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                <Button variant="contained" color="primary" onClick={exportToCSV}>
+                <Button variant="contained" color="primary" onClick={exportToCSV}  sx={{
+                    backgroundColor: '#69932f',
+                    color: '#fff',
+                    '&:hover': {
+                    backgroundColor: '#5a8028', // optional: darker shade for hover
+                    },
+                }}>
                     Export Full Report
                 </Button>
             </Box>
