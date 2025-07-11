@@ -42,7 +42,7 @@ const NeedsAudit = ({ reports, userID }) => {
   };
 
   return (
-    <div className="needs-audit-container bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20 b-maine-wrap">
+    <div className="needs-audit-container bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-[#69932f]/20 b-maine-wrap">
       <h3 className='text-lg font-semibold text-white mb-4'>Reports Needing Audit</h3>
       {reportsThatNeedAudit.length > 0 ? (
         <>
@@ -50,7 +50,7 @@ const NeedsAudit = ({ reports, userID }) => {
             {currentReports.map((report, index) => (
               <li key={index} className="audit-item px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                 <strong className='font-medium text-sm text-gray-300'>{report.processor || 'Unknown Processor'}</strong>
-                <button className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400' onClick={() => handleEditClick(report.reportID)}>Edit</button>
+                <button className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#69932f] hover:bg-[#8ba85a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]' onClick={() => handleEditClick(report.reportID)}>Edit</button>
               </li>
             ))}
           </ul>

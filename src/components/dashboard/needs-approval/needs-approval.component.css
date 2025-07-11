@@ -30,40 +30,35 @@ h3 {
   border-bottom: none;
 }
 
-button {
+button,
+.edit-btn,
+.audit-btn {
   padding: 6px 12px;
-  background-color: var(--accent-color);
+  background-color: #69932f;
   border: none;
   border-radius: 5px;
-  color: white;
+  color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button:hover {
-  background-color: #facc15;
+button:hover,
+.edit-btn:hover,
+.audit-btn:hover {
+  background-color: #69932f;
+  color: #fff;
 }
+
 button.btn-delete:hover,
 button.btn-view:hover {
   background: transparent;
   opacity: .7;
 }
 /* General button styling for both NeedsApproval and NeedsAudit */
-.edit-btn,
-.audit-btn {
-  padding: 6px 12px;
-  background-color: var(--accent-color);
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem; /* Ensure the same font size */
-  transition: background-color 0.3s ease;
-}
-
 .edit-btn:hover,
 .audit-btn:hover {
-  background-color: #facc15;
+  background-color: #8ba85a;
 }
 
 /* Ensure consistent display and spacing across different components */
@@ -82,3 +77,24 @@ button.btn-view:hover {
   background-color: #ff7800;
 }
 */
+
+.pagination-btn {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  color: #69932f;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination-btn.active {
+  background-color: #69932f;
+  color: #fff;
+  border-color: #69932f;
+}
+
+.pagination-btn:not(.active):hover {
+  background-color: #eaf3de;
+  color: #69932f;
+}

@@ -282,13 +282,13 @@ const ReportUpload = ({ authToken, organizationID }) => {
         </table>
 
         <div className="add-row-btn">
-          <button type="button" onClick={handleAddRow} className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400'>
+          <button type="button" onClick={handleAddRow} className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]'>
             Add File <i className="fa fa-plus"></i>
           </button>
         </div>
 
         {rows.length > 0 && (
-          <button type="submit" className="upload-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+          <button type="submit" className="upload-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]">
             Upload Files
           </button>
         )}

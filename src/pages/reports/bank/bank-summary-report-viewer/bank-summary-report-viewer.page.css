@@ -3,17 +3,18 @@
 .re-audit-btn {
     padding: 12px 25px;
     cursor: pointer;
-    background-color: var(--accent-color);
+    background-color: #69932f !important;
     border: none;
-    color: white;
+    color: #fff !important;
     font-weight: bold;
     border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.2s;
 }
 
 .export-btn:hover,
 .re-audit-btn:hover {
-    background-color: #5fa9a2;
+    background-color: #8ba85a !important;
+    color: #fff !important;
     transform: translateY(-2px);
 }
 

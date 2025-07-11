@@ -108,7 +108,7 @@ const EditDialog = ({ open, onClose, onSave, fields }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} className='text-yellow-400 cncl'>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary" className=' cncl-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400'>
+        <Button onClick={handleSubmit} variant="contained" color="primary" className=' cncl-btn text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]'>
           Save
         </Button>
       </DialogActions>

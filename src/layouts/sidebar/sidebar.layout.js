@@ -115,7 +115,8 @@ const Sidebar = ({ username, isAdmin, onLogout }) => {
       >
         <div className="logo p-6 border-b border-yellow-400/20">
           <Link className='text-yellow-400' to="/" onClick={toggleMobileMenu}>
-            Tracer
+            <img src="ISOHubLOGO.png" alt="ISOHub Logo" />
+            <div className="text-[#69932f]">Tracer</div>
           </Link>
         </div>
         <nav className="nav px-4 py-6">
@@ -225,7 +226,7 @@ const Sidebar = ({ username, isAdmin, onLogout }) => {
                   </div>
                 </Link>
               </div>
-              <button onClick={onLogout} className="logout-button  w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black">
+              <button onClick={onLogout} className="logout-button  w-[90%] bg-[#69932f] rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-[#69932f] gap-2 text-white">
                 Logout
               </button>
             </>

@@ -49,7 +49,7 @@ const EulaModal = ({ onAgree, onCancel }) => {
               checked={hasConsented}
               onChange={(e) => setHasConsented(e.target.checked)}
               className={`h-5 w-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-300 ${
-                hasConsented ? 'bg-yellow-400' : 'bg-white'
+                hasConsented ? 'bg-[#69932f]' : 'bg-white'
               }`}
             />
             <span className="ml-2">I agree to the Terms and Conditions</span>
@@ -68,8 +68,8 @@ const EulaModal = ({ onAgree, onCancel }) => {
               disabled={!hasConsented}
               className={`agree-btn px-4 py-2 rounded-md ${
                 hasConsented
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                  : 'bg-yellow-400 text-white opacity-50 cursor-not-allowed'
+                  ? 'bg-[#69932f] text-white hover:bg-[#69932f]'
+                  : 'bg-[#69932f] text-white opacity-50 cursor-not-allowed'
               }`}
             >
               Agree and Login

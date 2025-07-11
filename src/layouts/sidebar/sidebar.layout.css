@@ -156,8 +156,8 @@
 .logout-button {
   margin-top: 10px;
   padding: 8px 16px;
-  background-color: var(--accent-color);
-  color: var(--text-color);
+  background-color: #69932f !important;
+  color: #fff !important;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -169,6 +169,11 @@
 .sidebar.hovered .logout-button {
   opacity: 1;
   visibility: visible;
+}
+
+.logout-button:hover {
+  background-color: #8ba85a !important;
+  color: #fff !important;
 }
 
 /* Theme Toggle Container */

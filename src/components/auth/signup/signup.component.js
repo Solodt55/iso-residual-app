@@ -149,7 +149,7 @@ function Signup() {
           </div>
           {error && <p className="error-message">{error}</p>}
           {success && <p className="success-message">{success}</p>}
-          <button type="submit" className='w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50'>Signup</button>
+          <button type="submit" className='w-full bg-[#69932f] hover:bg-[#69932f] text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50'>Signup</button>
         </form>
         <p className='mt-1 text-center text-xs text-yellow-400/60 btn-new'>
           Already have an account? <Link to="/login">Login here</Link>

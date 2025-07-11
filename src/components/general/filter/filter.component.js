@@ -126,16 +126,36 @@ const FilterComponent = ({
 
             <Typography variant="body2">{filteredData.length} rows match.</Typography>
 
-            <Button
-                className=" btn-cts text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+            {/* <Button
+                className=" btn-cts text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]"
                 variant="contained"
                 onClick={handleActionsClick}
                 size="small"
-                sx={{ whiteSpace: "nowrap" }}
-                
+                sx={{ whiteSpace: "nowrap", color: '#fff' }}
             >
                 Actions
+            </Button> */}
+
+
+            <Button
+                variant="contained"
+                onClick={handleActionsClick}
+                size="small"
+                className="text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium bg-[#69932f] hover:bg-[#69932f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]"
+                sx={{
+                    whiteSpace: 'nowrap',
+                    color: '#fff', // force white text
+                    backgroundColor: "#69932f",
+                    '&:hover': {
+                    backgroundColor: '#69932f', // optional: hover variation
+                    color: '#fff',
+                    },
+                }}
+                >
+                Actions
             </Button>
+
+            
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}

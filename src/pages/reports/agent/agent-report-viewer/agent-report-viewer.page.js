@@ -433,10 +433,17 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                 subtitle={`Agent Report - ${monthYear}`}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                <Button variant="contained" color="primary" onClick={exportToCSV}>
+                <Button variant="contained" color="primary" onClick={exportToCSV}  sx={{
+                    backgroundColor: '#69932f',
+                    color: '#fff',
+                    '&:hover': {
+                    backgroundColor: '#5a8028', // optional: darker shade for hover
+                    },
+                }}>
                     Export Full Report
                 </Button>
             </Box>
+
             <Tabs
                 allowScrollButtonsMobile
                 value={activeProcessor}
@@ -449,13 +456,16 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                     borderColor: "divider", 
                     mb: 3,
                     '& .MuiTab-root': {
-                        color: '#000000',
-                        '&.Mui-selected': {
-                        color: '#000000',
-                        },
+                      color: '#000000', // default text color
+                      '&:hover': {
+                        color: '#ffffff', // hover text color
+                      },
+                      '&.Mui-selected': {
+                        color: '#fff !important', // force active tab text to white
+                      },
                     },
-                }}
-            >
+                  }}
+             >
                 {sortedReportData.map((processorReport, index) => (
                     <Tab key={index} label={processorReport.processor} />
                 ))}

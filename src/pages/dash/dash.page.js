@@ -74,7 +74,7 @@ const Dashboard = ({ organizationID: propOrganizationID, username, authToken }) 
     return (
         <div sx={{ padding: 4 }}  className='p-6'>
             {/* Header */}
-            <div class="max-w-7xl flex items-center justify-between space-x-3 mx-auto mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg" sx={{  mb: 3 }}>
+            <div class="max-w-7xl flex items-center justify-between space-x-3 mx-auto mb-8 bg-[#69932f] rounded-lg p-6 shadow-lg" sx={{  mb: 3 }}>
                 <div>
                     <Typography className='text-3xl font-bold text-black font-medium mb-0'  style={{ marginBottom: '0',fontSize: '1.875rem', fontWeight: '600' }}  variant="h4" component="h1" gutterBottom>
                         Welcome, {username ? username.charAt(0).toUpperCase() + username.slice(1) : ''}
