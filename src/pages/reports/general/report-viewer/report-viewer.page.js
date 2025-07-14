@@ -66,7 +66,16 @@ const ReportViewerPage = ({ authToken, organizationID }) => {
                 const response = await getAgents(organizationID, authToken);
                 console.log('response ashish',response);
                 if (response && response.agents) {
-                    setAgents(response.agents);
+                    // Sort agents alphabetically by first name only
+                    const sortedAgents = response.agents.sort((a, b) => {
+                        // Handle null/undefined names
+                        const aFirstName = (a.fName || '').toLowerCase();
+                        const bFirstName = (b.fName || '').toLowerCase();
+                        
+                        // Compare by first name only
+                        return aFirstName.localeCompare(bFirstName);
+                    });
+                    setAgents(sortedAgents);
                 } else {
                     setAgents([]);
                 }

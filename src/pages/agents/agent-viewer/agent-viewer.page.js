@@ -203,7 +203,9 @@ const AgentViewerPage = ({ organizationID, authToken }) => {
 
   return (
     <div className="agent-view-page">
-      <AgentDetails agent={editedAgent} allAgents={allAgents} onAgentChange={handleAgentChange} userID={userID} />
+      { userID == '' && (
+        <AgentDetails agent={editedAgent} allAgents={allAgents} onAgentChange={handleAgentChange} userID={userID} />
+      )}
 
       <div className="tabs">
         <div

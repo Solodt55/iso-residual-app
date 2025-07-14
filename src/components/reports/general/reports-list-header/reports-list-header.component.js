@@ -64,16 +64,43 @@ const ReportsListHeader = ({
                 </select>
 
                 {/* Report type filter */}
-                <select className='bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 p-right' value={reportType} onChange={(e) => setReportType(e.target.value)}>
+                {/* <select className='bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 p-right' value={reportType} onChange={(e) => setReportType(e.target.value)}>
                     <option value="all">All Reports</option>
                     <option value="agent">Agent Reports</option>
-                    <option value="agent-summary">Agent Summary Reports</option> {/* New Agent Summary Reports Option */}
+                    <option value="agent-summary">Agent Summary Reports</option>
                     <option value="ar">AR Reports</option>
                     <option value="bank-summary">Bank Summary Reports</option>
                     <option value="billing">Billing Reports</option>
                     <option value="processor">Processor Reports</option>
                     <option value="processor-summary">Processor Summary Reports</option>
+                </select> */}
+
+                <select
+                className='bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 p-right'
+                value={reportType}
+                onChange={(e) => setReportType(e.target.value)}
+                >
+                {userID ? (
+                    // Only show Agent Reports if userID is not blank
+                    <>
+                        <option value="all">All Reports</option>
+                        <option value="agent">Agent Reports</option>
+                    </>
+                ) : (
+                    // Show all options if userID is blank
+                    <>
+                    <option value="all">All Reports</option>
+                    <option value="agent">Agent Reports</option>
+                    <option value="agent-summary">Agent Summary Reports</option>
+                    <option value="ar">AR Reports</option>
+                    <option value="bank-summary">Bank Summary Reports</option>
+                    <option value="billing">Billing Reports</option>
+                    <option value="processor">Processor Reports</option>
+                    <option value="processor-summary">Processor Summary Reports</option>
+                    </>
+                )}
                 </select>
+
 
                 {/* Search field */}
                 <input
