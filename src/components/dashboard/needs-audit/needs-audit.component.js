@@ -53,7 +53,29 @@ const NeedsAudit = ({ reports, userID }) => {
               {currentReports.map((report, index) => (
                 <li key={index} className="audit-item px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   <strong className='font-medium text-sm text-gray-300'>{report.processor || 'Unknown Processor'}</strong>
-                  <button className='text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-[#69932f] hover:bg-[#8ba85a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]' onClick={() => handleEditClick(report.reportID)}>Edit</button>
+                  <button 
+                    style={{
+                      backgroundColor: '#69932f !important',
+                      color: '#fff !important',
+                      padding: '6px 12px',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: '500'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#8ba85a';
+                      e.target.style.color = '#fff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = '#69932f';
+                      e.target.style.color = '#fff';
+                    }}
+                    onClick={() => handleEditClick(report.reportID)}
+                  >
+                    Edit
+                  </button>
                 </li>
               ))}
             </ul>
@@ -91,7 +113,26 @@ const NeedsAudit = ({ reports, userID }) => {
               
               <div className="flex justify-center gap-4">
               <button 
-                className='text-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#69932f] hover:bg-[#8ba85a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f] transition-colors duration-200'
+                style={{
+                  backgroundColor: '#69932f',
+                  color: '#fff',
+                  padding: '12px 24px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#8ba85a';
+                  e.target.style.color = '#fff';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#69932f';
+                  e.target.style.color = '#fff';
+                }}
                 onClick={() => navigate('/reports/all')}
               >
                 View All Reports
