@@ -58,10 +58,10 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
   }, [authToken, organizationID, monthYear]);
 
   useEffect(() => {
-    console.log("Fetching reports...");
-    console.log("generatedReportData----:", generatedReportData);
-    console.log("dbReport22:", dbReport);
-    console.log("mergedData:", mergedData);
+    // console.log("Fetching reports...");
+    // console.log("generatedReportData----:", generatedReportData);
+    // console.log("savedResponse:", savedResponse);
+    // console.log("mergedData:", mergedData);
   }, [mergedData, generatedReportData, dbReport]);
   const fetchReports = async () => {
     try {
@@ -89,7 +89,8 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
           savedResponse?.data?.reportData || null
         );
         setMergedData(merged);
-        console.log("Merged data:", merged);
+        // console.log('merged',merged);
+        // console.log("Merged data:", merged);
       } else {
         // console.warn("Generated report is empty. No data to merge.");
         setMergedData([]);
@@ -282,6 +283,7 @@ useEffect(() => {
       "BPS",
       "%",
       "Agent Net",
+      "Branch ID"
     ],
   };
 
