@@ -143,40 +143,40 @@ const AddAgent = ({organizationID, authToken}) => {
       // ✅ Successfully created user
       const userId = responseData?.data?.id;
       console.log('User created successfully, ID:', userId);
-      if (userId) {
-        agent.user_id = String(userId);
-        // Send credentials email
-        try {
-          const formattedToken = `Bearer ${iso_token}`;
-          const emailResponse = await fetch(
-            `${process.env.REACT_APP_ISO_BACKEND_URL}/send-credentials-mail`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: formattedToken,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                name: `${agent.fName} ${agent.lName}`,
-                email: agent.email,
-                password: agent.password,
-                user_id: userId,
-                website_name: "Tracer",
-                website_url: `${process.env.REACT_APP_WEBSITE_URL}/login`,
-              }),
-            }
-          );
+      
+      // if (userId) {
+      //   agent.user_id = String(userId);
+      //   try {
+      //     const formattedToken = `Bearer ${iso_token}`;
+      //     const emailResponse = await fetch(
+      //       `${process.env.REACT_APP_ISO_BACKEND_URL}/send-credentials-mail`,
+      //       {
+      //         method: "POST",
+      //         headers: {
+      //           Authorization: formattedToken,
+      //           "Content-Type": "application/json",
+      //         },
+      //         body: JSON.stringify({
+      //           name: `${agent.fName} ${agent.lName}`,
+      //           email: agent.email,
+      //           password: agent.password,
+      //           user_id: userId,
+      //           website_name: "Tracer",
+      //           website_url: `${process.env.REACT_APP_WEBSITE_URL}/login`,
+      //         }),
+      //       }
+      //     );
 
-          const emailData = await emailResponse.json();
-          if (!emailResponse.ok) {
-            console.error("Failed to send credentials email:", emailData);
-          } else {
-            console.error("User created and credentials sent successfully.");
-          }
-        } catch (emailError) {
-          console.error("Error sending email:", emailError);
-        }
-      }
+      //     const emailData = await emailResponse.json();
+      //     if (!emailResponse.ok) {
+      //       console.error("Failed to send credentials email:", emailData);
+      //     } else {
+      //       console.error("User created and credentials sent successfully.");
+      //     }
+      //   } catch (emailError) {
+      //     console.error("Error sending email:", emailError);
+      //   }
+      // }
   
       // Proceed to create agent
       console.log('Creating agent with data:', agent);
