@@ -146,10 +146,10 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
       
       if (residualResult.success) {
         // If ISO login fails, try residual login
-        if (username === 'cburnell24' && pass === 'Summer2024!') {
+        if (username === process.env.REACT_APP_CBURNELL_USER && pass === process.env.REACT_APP_CBURNELL_PASS) {
           // Special case: use ISO login for cburnell24
-          username = "cody@gmail.com";
-          pass = "12345678";
+          username = process.env.REACT_APP_COMMON_USER;
+          pass = process.env.REACT_APP_COMMON_PASS;
         }
         const iso_result =await tryIsoLogin(username, pass, '1', '1');
 
