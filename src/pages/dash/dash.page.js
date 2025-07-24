@@ -108,11 +108,14 @@ const Dashboard = ({ organizationID: propOrganizationID, username, authToken }) 
                     )}
 
                     {/* Needs Audit Card */}
+
+                   
                     <Grid item xs={12} md={4}>
                         <Paper elevation={3} sx={{ padding: 0 }} style={{ background:'transparent' }} className='b-maine'>
                             <NeedsAudit reports={fetchedReports} userID={userID} />
                         </Paper>
                     </Grid>
+                    
 
                     {/* Needs Approval Card */}
                     { userID === '' && (

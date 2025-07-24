@@ -58,10 +58,10 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
   }, [authToken, organizationID, monthYear]);
 
   useEffect(() => {
-    console.log("Fetching reports...");
-    console.log("generatedReportData----:", generatedReportData);
-    console.log("dbReport22:", dbReport);
-    console.log("mergedData:", mergedData);
+    // console.log("Fetching reports...");
+    // console.log("generatedReportData----:", generatedReportData);
+    // console.log("savedResponse:", savedResponse);
+    // console.log("mergedData:", mergedData);
   }, [mergedData, generatedReportData, dbReport]);
   const fetchReports = async () => {
     try {
@@ -89,7 +89,8 @@ const BankSummaryReportViewerPage = ({ organizationID, authToken }) => {
           savedResponse?.data?.reportData || null
         );
         setMergedData(merged);
-        console.log("Merged data:", merged);
+        // console.log('merged',merged);
+        // console.log("Merged data:", merged);
       } else {
         // console.warn("Generated report is empty. No data to merge.");
         setMergedData([]);
@@ -117,7 +118,18 @@ useEffect(() => {
       console.log('Agents API Response:', response);
       
       if (response && response.agents) {
-        setAgents(response.agents);
+
+      // Sort agents alphabetically by first name only
+      const sortedAgents = response.agents.sort((a, b) => {
+        // Handle null/undefined names
+        const aFirstName = (a.fName || '').toLowerCase();
+        const bFirstName = (b.fName || '').toLowerCase();
+        
+        // Compare by first name only
+        return aFirstName.localeCompare(bFirstName);
+      });
+
+        setAgents(sortedAgents);
         // console.log('Agents Data:', response.agents);
       }
     } catch (err) {
@@ -271,6 +283,7 @@ useEffect(() => {
       "BPS",
       "%",
       "Agent Net",
+      "Branch ID"
     ],
   };
 
@@ -472,7 +485,7 @@ useEffect(() => {
               color: '#ffffff', // hover text color
             },
             '&.Mui-selected': {
-              color: '#fff !important', // force active tab text to white
+              color: '#000000 !important', // force active tab text to white
             },
           },
         }}

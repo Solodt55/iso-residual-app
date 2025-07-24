@@ -156,7 +156,18 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
           console.log('Agents reports API Response:', response);
           
           if (response && response.agents) {
-            setAgents(response.agents);
+
+            // Sort agents alphabetically by first name only
+            const sortedAgents = response.agents.sort((a, b) => {
+                // Handle null/undefined names
+                const aFirstName = (a.fName || '').toLowerCase();
+                const bFirstName = (b.fName || '').toLowerCase();
+                
+                // Compare by first name only
+                return aFirstName.localeCompare(bFirstName);
+            });
+
+            setAgents(sortedAgents);
             // console.log('Agents Data:', response.agents);
           }
         } catch (err) {
@@ -461,7 +472,7 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                         color: '#ffffff', // hover text color
                       },
                       '&.Mui-selected': {
-                        color: '#fff !important', // force active tab text to white
+                        color: '#000000 !important', // force active tab text to white
                       },
                     },
                   }}
