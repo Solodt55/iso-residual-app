@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAgent, updateAgent } from '../../../api/agents.api';
 import { confirmAlert } from 'react-confirm-alert';
 import './agent-viewer.component.css';
+import AddSplit from '../add-split/add-split.component';
 
 const AgentViewer = ({ organizationID, authToken }) => {
   const { agentID } = useParams();
@@ -15,6 +16,8 @@ const AgentViewer = ({ organizationID, authToken }) => {
   const [clientsPerPage] = useState(10); // Adjust the number of merchants per page
   const [hasBranchIDFilter, setHasBranchIDFilter] = useState(false); // State for "Has Branch ID" filter
   const [searchTerm, setSearchTerm] = useState(''); // State for merchant search
+  // State for multiple AddSplit entries (agent-specific)
+  const [splits, setSplits] = useState([]);
 
   const navigate = useNavigate();
 
@@ -46,6 +49,18 @@ const AgentViewer = ({ organizationID, authToken }) => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleAddSplit = () => {
+    setSplits((prev) => [...prev, { role: 'Agent', name: '', percentage: '' }]);
+  };
+
+  const handleSplitChange = (index, updatedSplit) => {
+    setSplits((prev) => prev.map((s, i) => (i === index ? updatedSplit : s)));
+  };
+
+  const handleRemoveSplit = (indexToRemove) => {
+    setSplits((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
 
 
@@ -87,7 +102,9 @@ const AgentViewer = ({ organizationID, authToken }) => {
   const handleSaveClients = async () => {
     const updatedClients = [...clients, ...unsavedClients];
     try {
-      await updateAgent(organizationID, agentID, { ...agent, clients: updatedClients }, authToken);
+      // include splits when saving
+      const updatedAgent = { ...agent, clients: updatedClients, splits };
+      await updateAgent(organizationID, agentID, updatedAgent, authToken);
       setClients(updatedClients);
       setUnsavedClients([]);
       alert('Agent updated successfully!');
@@ -100,7 +117,7 @@ const AgentViewer = ({ organizationID, authToken }) => {
     setAgent({ ...agent, [field]: value });
   };
 
-  const handleSplitChange = (value) => {
+  const handleAgentSplitChange = (value) => {
     setAgent({ ...agent, split: value });
   };
 
@@ -191,13 +208,24 @@ const AgentViewer = ({ organizationID, authToken }) => {
             <button onClick={() => navigate('/agents')} className="btn-back">
               Back to Agents List
             </button>
-            {(unsavedClients.length > 0 || clients.length > 0) && (
-              <div className="save">
-                <button onClick={handleSaveClients} className="btn-save">
-                  Save Changes
-                </button>
-              </div>
-            )}
+            {/* Add Split button and dynamic AddSplit components */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
+              <button onClick={handleAddSplit} className="btn-add-split">
+                Add Split
+              </button>
+
+              {splits.map((s, idx) => (
+                <AddSplit key={idx} index={idx} split={s} onChange={handleSplitChange} onRemove={handleRemoveSplit} />
+              ))}
+
+              {(unsavedClients.length > 0 || clients.length > 0) && (
+                <div className="save">
+                  <button onClick={handleSaveClients} className="btn-save">
+                    Save Changes
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
         <div className="clients-section">
