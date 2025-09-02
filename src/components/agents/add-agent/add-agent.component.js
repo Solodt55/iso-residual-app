@@ -53,6 +53,7 @@ const AddAgent = ({organizationID, authToken}) => {
     }
   
     try {
+      console.log('Creating user with data:', agent);
       const response = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/user/create`, {
         method: 'POST',
         headers: {
@@ -80,7 +81,7 @@ const AddAgent = ({organizationID, authToken}) => {
         setValidationErrors(responseData.errors); // Update validation errors for UI
         return;
       }
-  
+      
       if (!response.ok) {
         console.log('Non-OK response received:', response.status);
         setValidationErrors({ general: [responseData.message || 'Failed to create user.'] });
