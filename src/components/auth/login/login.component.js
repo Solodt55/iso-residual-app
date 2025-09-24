@@ -249,8 +249,9 @@ const Login = ({ setUsername, setAuthToken, setOrganization }) => {
     e.preventDefault();
 
     if (localUsername === 'cburnell24') {
-      handleLogin(localUsername, password);
     }
+    console.log('Submitting login for:', localUsername);
+    handleLogin(localUsername, password);
     // console.log('handle submit');
     // handleLogin(localUsername, password);
 
