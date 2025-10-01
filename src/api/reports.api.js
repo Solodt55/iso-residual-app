@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PROD_URL : process.env.REACT_APP_DEV_URL;
 const ROUTE_BASE_URL = `${BASE_URL}/api/v2/reports`; // Ensure this is set in your .env file
@@ -19,6 +20,7 @@ export const addReport = async (organizationID, reportData, authToken) => {
 
 export const getReports = async (organizationID, type, authToken) => {
   console.log('getReports called with:', organizationID, type, authToken);
+  const decodedToken = jwtDecode(authToken);
   try {
     const headers = {
       Authorization: `Bearer ${authToken}`,
@@ -26,11 +28,18 @@ export const getReports = async (organizationID, type, authToken) => {
     let response;
     
     if (type === 'all') {
-      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+      if(decodedToken.isAdmin){
+        response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+      } else {
+        response = await axios.get(`${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}`, { headers });
+      }
     } else {
-      response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
+        if(!decodedToken.isAdmin){
+        response = await axios.get(`${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}/${type}`, { headers });
+      } else {
+        response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
+      }
     }
-
     
     return response.data;
   } catch (error) {
@@ -120,7 +129,8 @@ export const generateAgentReport = async (organizationID, agentID, monthYear, au
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const url = `${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}`;
+    const decodedToken = jwtDecode(authToken);
+    const url = decodedToken.isAdmin ? `${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}` : `${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}/${agentID}`;
     const response = await axios.post(
       `${url}`,
       { monthYear }, // Send the monthYear in the body
