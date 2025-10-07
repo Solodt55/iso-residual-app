@@ -22,6 +22,7 @@ export const getReports = async (organizationID, type, authToken) => {
   console.log('getReports called with:', organizationID, type, authToken);
   const decodedToken = jwtDecode(authToken);
   try {
+    console.log('am I trying to get a processor report', type);
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
@@ -31,14 +32,12 @@ export const getReports = async (organizationID, type, authToken) => {
       if(decodedToken.isAdmin){
         response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
       } else {
-        response = await axios.get(`${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}`, { headers });
+        response = await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}`, { headers });
       }
     } else {
-        if(!decodedToken.isAdmin){
-        response = await axios.get(`${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}/${type}`, { headers });
-      } else {
-        response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers });
-      }
+      response = decodedToken.isAdmin ? 
+        await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${type}`, { headers }) :
+        await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}/${type}`, { headers });
     }
     
     return response.data;
@@ -53,11 +52,12 @@ export const getReports = async (organizationID, type, authToken) => {
 };
 
 export const getAllReports = async (organizationID, authToken) => {
+  const decodedToken = jwtDecode(authToken);
   try {
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+    const response = decodedToken.isAdmin ? await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers }) : await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}`, { headers });
     console.log('responsewwwwwwwwwww22222',response.data);
     return response.data;
   } catch (error) {
@@ -126,11 +126,11 @@ export const createAgentReport = async (organizationID, agentID, monthYear, repo
 
 export const generateAgentReport = async (organizationID, agentID, monthYear, authToken) => {
   try {
+    const decodedToken = jwtDecode(authToken);
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const decodedToken = jwtDecode(authToken);
-    const url = decodedToken.isAdmin ? `${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}` : `${ROUTE_BASE_URL}/organizations/users-reports/${organizationID}/${agentID}`;
+    const url = decodedToken.isAdmin ? `${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}` : `${ROUTE_BASE_URL}/organizations/users/${organizationID}/${agentID}`;
     const response = await axios.post(
       `${url}`,
       { monthYear }, // Send the monthYear in the body
@@ -146,11 +146,14 @@ export const generateAgentReport = async (organizationID, agentID, monthYear, au
 
 export const getAgentReportByMonth = async (organizationID, agentID, monthYear, authToken) => {
   try {
+    const decodedToken = jwtDecode(authToken);
     const monthYearSplit = monthYear.split(' ');
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}/${monthYearSplit[0]}/${monthYearSplit[1]}`, { headers });
+    const response = decodedToken.isAdmin ? 
+      await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}/${monthYearSplit[0]}/${monthYearSplit[1]}`, { headers }) 
+      : await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}/${agentID}/${monthYearSplit[0]}/${monthYearSplit[1]}`, { headers });
     return response;
   } catch (error) {
     console.error("Error fetching agent report:", error);

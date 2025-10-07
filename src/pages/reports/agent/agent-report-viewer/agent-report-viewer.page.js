@@ -108,7 +108,7 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
             console.log('savedResponse:', savedResponse);
     
             // Set agent details
-            const agentData = agentResponse.data?.agent || null;
+            const agentData = agentResponse.data?.agent || agentResponse.data?.agents || null;
             setAgent(agentData);
     
             const generatedReportData = generatedResponse.data?.reportData || [];
@@ -156,7 +156,9 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
           console.log('Agents reports API Response:', response);
           
           if (response && response.agents) {
-
+            if (!Array.isArray(response.agents)) {
+              response.agents = [response.agents]; // Ensure agents is an array
+            }
             // Sort agents alphabetically by first name only
             const sortedAgents = response.agents.sort((a, b) => {
                 // Handle null/undefined names

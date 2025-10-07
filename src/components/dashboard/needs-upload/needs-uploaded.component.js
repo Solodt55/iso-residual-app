@@ -40,6 +40,7 @@ const NeedsUploaded = ({ reports }) => {
 
     // Gather processors from reports that have been uploaded
     const uploadedProcessors = [];
+    console.log('for each reports',reports);
     reports.forEach((report) => {
       if (report.processor) {
         uploadedProcessors.push(report.processor);

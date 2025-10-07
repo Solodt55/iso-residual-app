@@ -42,6 +42,9 @@ const AgentReportsList = ({ authToken, organizationID, filterMonth, filterYear, 
     try {
       setLoading(true);
       const agentResponse = await getAgents(organizationID, authToken); // Fetch agents
+      if (!Array.isArray(agentResponse.agents)) {
+        agentResponse.agents = [agentResponse.agents]; // Ensure agents is an array
+      }
       console.log(agentResponse.agents,'agentResponse');
       //  Extract unique fName values
       const uniqueFirstNames = [

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_PROD_URL : process.env.REACT_APP_DEV_URL;
 const ROUTE_BASE_URL = `${BASE_URL}/api/v2/agents`; // Ensure this is set in your .env file
@@ -12,7 +13,8 @@ export const getAgents = async (organizationID, authToken) => {
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers });
+    const decodedToken = jwtDecode(authToken);
+    const response = decodedToken.isAdmin ? await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}`, { headers }) : await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}`, { headers });
     console.log("Agents:", response.data);
     console.log(ROUTE_BASE_URL,'ROUTE_BASE_URL');
     return response.data;
@@ -39,10 +41,11 @@ export const getAgentUsingUserId = async (organizationID, authToken, userId) => 
 // Fetch a single agent by ID
 export const getAgent = async (organizationID, agentID, authToken) => {
   try {
+    const decodedToken = jwtDecode(authToken);
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
-    const response = await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}`, { headers });
+    const response = decodedToken.isAdmin ? await axios.get(`${ROUTE_BASE_URL}/organizations/${organizationID}/${agentID}`, { headers }) : await axios.get(`${ROUTE_BASE_URL}/organizations/users/${organizationID}/${agentID}`, { headers }) ;
     console.log("Agent Details:", response.data);
     return response;
   } catch (error) {
