@@ -21,7 +21,8 @@ const FilterComponent = ({
     onDelete,
     fileName,
     onExport,
-    userID
+    userID,
+    isAdmin
 }) => {
     console.log('filter userID:', userID, '| Type:', typeof userID);
 
@@ -172,14 +173,16 @@ const FilterComponent = ({
                         {action.name}
                     </MenuItem>
                 ))}
-                <MenuItem
-                    onClick={() => {
-                        onDelete();
-                        handleActionsClose();
-                    }}
-                >
-                    Delete
-                </MenuItem>
+                {isAdmin && (
+                    <MenuItem
+                        onClick={() => {
+                            onDelete();
+                            handleActionsClose();
+                        }}
+                    >
+                        Delete
+                    </MenuItem>
+                )}
                 <MenuItem
                     onClick={() => {
                         onExport();

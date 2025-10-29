@@ -18,8 +18,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const AgentReportViewer = ({
     processor,
     mergedData,
+    setMergedData,
     onSave,
-    setMergedData, 
+    isAdmin, // Add isAdmin prop 
     hasChanges,
     setHasChanges, 
     agents,
@@ -48,27 +49,30 @@ const AgentReportViewer = ({
     /**
      * ✅ Keep the approved column logic as requested
      */
-    columns.push({
-        field: "approved",
-        label: "Approved",
-        render: (approved) =>
-            approved ? (
-                <FaCheck color="green" title="Approved" />
-            ) : null,
-    });
+    // Only show these columns for admin users
+    if (isAdmin) {
+        columns.push({
+            field: "approved",
+            label: "Approved",
+            render: (approved) =>
+                approved ? (
+                    <FaCheck color="green" title="Approved" />
+                ) : null,
+        });
 
-    columns.push({
-        field: "splits",
-        label: "Splits",
-        render: (splits) => {
-            if (!splits || !Array.isArray(splits)) return null;
-            return splits.map((split, index) => (
-                <div key={index}>
-                    {`${split.type}: ${split.name} - ${split.value}`}
-                </div>
-            ));
-        }
-    });
+        columns.push({
+            field: "splits",
+            label: "Splits",
+            render: (splits) => {
+                if (!splits || !Array.isArray(splits)) return null;
+                return splits.map((split, index) => (
+                    <div key={index}>
+                        {`${split.type}: ${split.name} - ${split.value}`}
+                    </div>
+                ));
+            }
+        });
+    }
 
     /**
      * ✅ Bulk approval handler
@@ -104,12 +108,12 @@ const AgentReportViewer = ({
         { label: "Approved", field: "approved", type: "checkbox" },
     ];
 
-    const actions = [
+    const actions = isAdmin ? [
         {
             name: "Bulk Approve",
             onClick: handleBulkApprove,
         },
-    ];
+    ] : [];
 
     console.log('columns2222',columns)
 
@@ -309,13 +313,14 @@ const AgentReportViewer = ({
                 setSelected={setSelectedRows}
                 fileName={`${processor}_AgentReport.csv`}
                 enableTotals={true}
-                approvalAction={true}
+                approvalAction={isAdmin} // Only show action buttons for admin users
                 onSave={onSave}
                 setHasChanges={setHasChanges}
                 hasChanges={hasChanges}
                 editDialogProps={editDialogProps}
                 type="report"
                 userID={userID}
+                isAdmin={isAdmin}
             />
         </Box>
     );

@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import { jwtDecode } from 'jwt-decode';
 
 const ReportsListHeader = ({ 
   filterMonth, 
@@ -33,18 +35,36 @@ const ReportsListHeader = ({
         }
         return years;
     };
+        // Get isAdmin from token
+    const token = localStorage.getItem('authToken');
+    let decodedToken = null;
+    try {
+        decodedToken = token ? jwtDecode(token) : null;
+    } catch {
+        decodedToken = null;
+    }
 
-    return (
-        <div className="reports-header">
-            <div className="header">
-                <h2 className='text-lg font-semibold text-white mb-4'>{reportType.charAt(0).toUpperCase() + reportType.slice(1)} Reports</h2>
-                <button onClick={handleUploadClick}
-                className="text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]"
-                style={{ backgroundColor: '#69932f' }}
-                >
-                  Go to Report Upload
-                </button>
-            </div>
+    // If agent, force reportType to 'agent'
+    if (decodedToken && !decodedToken.isAdmin && reportType !== 'agent') {
+        setReportType('agent');
+    }
+    // Debug log for decodedToken and isAdmin
+    console.log('[reports-list-header] decodedToken:', decodedToken, '| isAdmin:', decodedToken && decodedToken.isAdmin);
+
+        return (
+                <div className="reports-header">
+                        <div className="header">
+                                <h2 className='text-lg font-semibold text-white mb-4'>{reportType.charAt(0).toUpperCase() + reportType.slice(1)} Reports</h2>
+                                {/* Show upload button for admins only */}
+                                {decodedToken && decodedToken.isAdmin && (
+                                    <button onClick={handleUploadClick}
+                                        className="text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#69932f]"
+                                        style={{ backgroundColor: '#69932f' }}
+                                    >
+                                        Go to Report Upload
+                                    </button>
+                                )}
+                        </div>
 
             <div className="filters">
                 {/* Month filter */}
@@ -75,31 +95,24 @@ const ReportsListHeader = ({
                     <option value="processor-summary">Processor Summary Reports</option>
                 </select> */}
 
-                <select
-                className='bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 p-right'
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                >
-                {userID ? (
-                    // Only show Agent Reports if userID is not blank
-                    <>
+
+                {/* Show report type dropdown for admins only */}
+                {decodedToken && decodedToken.isAdmin ? (
+                    <select
+                        className='bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 p-right'
+                        value={reportType}
+                        onChange={(e) => setReportType(e.target.value)}
+                    >
                         <option value="all">All Reports</option>
                         <option value="agent">Agent Reports</option>
-                    </>
-                ) : (
-                    // Show all options if userID is blank
-                    <>
-                    <option value="all">All Reports</option>
-                    <option value="agent">Agent Reports</option>
-                    <option value="agent-summary">Agent Summary Reports</option>
-                    <option value="ar">AR Reports</option>
-                    <option value="bank-summary">Bank Summary Reports</option>
-                    <option value="billing">Billing Reports</option>
-                    <option value="processor">Processor Reports</option>
-                    <option value="processor-summary">Processor Summary Reports</option>
-                    </>
-                )}
-                </select>
+                        <option value="agent-summary">Agent Summary Reports</option>
+                        <option value="ar">AR Reports</option>
+                        <option value="bank-summary">Bank Summary Reports</option>
+                        <option value="billing">Billing Reports</option>
+                        <option value="processor">Processor Reports</option>
+                        <option value="processor-summary">Processor Summary Reports</option>
+                    </select>
+                ) : null}
 
 
                 {/* Search field */}

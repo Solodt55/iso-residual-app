@@ -12,11 +12,19 @@ import BankSummaryReportsList from '../../../../components/reports/bank/bank-sum
 import { jwtDecode } from 'jwt-decode';
 
 const ReportsPage = ({ organizationID, authToken }) => {
+
     const { type } = useParams();
     const [filterMonth, setFilterMonth] = useState('');
     const [filterYear, setFilterYear] = useState('');
-    const [reportType, setReportType] = useState(type || 'billing'); // Default to 'billing' if type is not provided
-    const [searchTerm, setSearchTerm] = useState(''); // New state for search input
+    const token = localStorage.getItem('authToken');
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken?.user_id || '';
+    const isAdmin = decodedToken?.isAdmin;
+    // Default to 'agent' for agents, 'billing' for admin, or use type param if present
+    const [reportType, setReportType] = useState(
+        type ? type : (isAdmin ? 'billing' : 'agent')
+    );
+    const [searchTerm, setSearchTerm] = useState('');
     const [uniqueFirstNames , setUniqueFirstNames] = useState('');
     const [uniqueProcessor , setUniqueProcessor] = useState('');
 
@@ -27,16 +35,11 @@ const ReportsPage = ({ organizationID, authToken }) => {
         // Logic for handling "Go to Report Upload" button click
     };
 
-    const token = localStorage.getItem('authToken');
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken?.user_id || '';
     const roleId = decodedToken?.roleId || '';
-
     let userID = '';
-
-    // Add userId to formData if condition is met
-    if (decodedToken && (userId !== '') && (roleId !== 1 && roleId !== 2)) {
-       userID = userId
+    // Only set userID for non-admins (agents)
+    if (decodedToken && !decodedToken.isAdmin && userId !== '') {
+        userID = userId;
     }
 
     return (

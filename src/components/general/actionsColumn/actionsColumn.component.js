@@ -2,7 +2,7 @@ import React from "react";
 import { Box, IconButton } from "@mui/material";
 import { Edit, Delete, Check } from "@mui/icons-material";
 
-const ActionsColumn = ({ onEdit, onDelete, onApprove }) => (
+const ActionsColumn = ({ onEdit, onDelete, onApprove, isAdmin = false }) => (
   <Box
     sx={{
       display: "flex",
@@ -11,17 +11,17 @@ const ActionsColumn = ({ onEdit, onDelete, onApprove }) => (
       gap: 1, // Space between buttons
     }}
   >
-    {onEdit && (
+    {isAdmin && onEdit && (
       <IconButton color="primary" onClick={onEdit}>
         <Edit />
       </IconButton>
     )}
-    {onDelete && (
+    {isAdmin && onDelete && (
       <IconButton color="error" onClick={onDelete}>
         <Delete />
       </IconButton>
     )}
-    {onApprove && (
+    {isAdmin && onApprove && (
       <IconButton color="success" onClick={onApprove}>
         <Check />
       </IconButton>

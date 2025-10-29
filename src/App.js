@@ -7,7 +7,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sidebar from './layouts/sidebar/sidebar.layout.js';
 import Footer from './layouts/footer/footer.layout.js';
 // components
-import Login from './components/auth/login/login.component.js';
+import Login from './components/login/login.component.js';
 import Signup from './components/auth/signup/signup.component.js';
 import ReportUpload from './components/reports/general/report-upload/report-upload.component.js';
 import UserSettings from './components/user-settings/user-settings.component.js';
@@ -38,6 +38,23 @@ import ReportViewerPage from './pages/reports/general/report-viewer/report-viewe
 import './App.css';
 
 function App() {
+  // Helper to update state after login
+  const handleLoginSuccess = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      setUsername(decodedToken.username);
+      setOrganization(decodedToken.organization);
+      setIsAdmin(decodedToken.isAdmin);
+      setAuthToken(token);
+      // Ensure organizationID is also in localStorage
+      if (!localStorage.getItem('organizationID')) {
+        localStorage.setItem('organizationID', decodedToken.organization);
+      }
+    } catch (error) {
+      console.error('Invalid token on login:', error);
+      handleLogout();
+    }
+  };
   const [username, setUsername] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [organizationID, setOrganization] = useState(null);
@@ -75,6 +92,10 @@ function App() {
       }
     }
   }, []);  // Only runs on initial render
+    useEffect(() => {
+      // Debug log for isAdmin and authToken on every render
+      console.log('[App.js] isAdmin state:', isAdmin, '| authToken:', authToken);
+    }, [isAdmin, authToken]);
   
 
   const handleLogout = () => {
@@ -118,6 +139,17 @@ function App() {
     handleLogout();
   }
 
+  // Helper to get roleId from token
+  const getRoleId = () => {
+    if (!authToken) return null;
+    try {
+      const decoded = jwtDecode(authToken);
+      return decoded.roleId;
+    } catch {
+      return null;
+    }
+  };
+
   return (
     <Router>
       <div className="app-container bg-black">
@@ -126,14 +158,21 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={username ? <Navigate to="/dashboard" /> : <Login setUsername={setUsername} setOrganization={setOrganization} setAuthToken={setAuthToken} />}
+              element={username ? (
+                // Always redirect to dashboard for admin, reports for non-admin
+                isAdmin
+                  ? <Navigate to="/dashboard" replace />
+                  : <Navigate to="/reports/all" replace />
+              ) : (
+                <Login onLoginSuccess={handleLoginSuccess} />
+              )}
             />
             <Route path="/signup" element={<Signup />} />
             {username && !isAuthTokenExpired(authToken) ? (
               <>
                 {/* Protected routes */}
                 {/* Dashboard */}
-                <Route path="/dashboard" element={<Dash organizationID={organizationID} username={username} authToken={authToken} />} />
+                <Route path="/dashboard" element={isAdmin ? <Dash organizationID={organizationID} username={username} authToken={authToken} /> : <Navigate to="/reports/all" />} />
                 <Route path="/admin-dashboard" element={<Dash username={username} authToken={authToken} />} />
                 { /* Merchant */}
                 <Route path="/merchants" element={<MerchantsListPage organizationID={organizationID} authToken={authToken} />} />

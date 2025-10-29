@@ -14,7 +14,6 @@ import processorTypeMap from "../../../../lib/typeMap.lib.js";
 import Header from "../../../../components/general/header/header.component.js"; // Import the reusable Header component
 import { mergeReports } from "../../../../utils/merge.util.js";
 import "./agent-report-viewer.page.css";
-import { use } from "react";
 import { getAgents } from "../../../../api/agents.api.js";
 import { useNavigate,useLocation } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
@@ -69,6 +68,7 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
     const decodedToken = jwtDecode(token);
     const userId = decodedToken?.user_id || '';
     const roleId = decodedToken?.roleId || '';
+    const isAdmin = decodedToken?.isAdmin || false;
 
     let userID = '';
 
@@ -493,12 +493,13 @@ const AgentReportViewerPage = ({ organizationID, authToken }) => {
                         processor={sortedReportData[activeProcessor].processor}
                         mergedData={[sortedMergedData[activeProcessor]]}
                         onSave={handleSaveChanges}
-                        setMergedData={setMergedData} // Pass this prop
-                        setHasChanges={setHasChanges} // Pass this prop
-                        hasChanges={hasChanges} // Pass this prop
+                        setMergedData={setMergedData}
+                        setHasChanges={setHasChanges}
+                        hasChanges={hasChanges}
                         agents={agents}
                         updatedMerchantData={handleUpdatedMerchant}
                         userID={userID}
+                        isAdmin={decodedToken?.isAdmin || false}
                     />
                 )}
             </Box>

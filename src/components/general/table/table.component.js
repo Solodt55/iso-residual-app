@@ -43,7 +43,8 @@ const TableWithFilters = ({
   agentDetails,
   merchantPartnerSlug,
   type,
-  userID
+  userID,
+  isAdmin
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -289,6 +290,7 @@ const TableWithFilters = ({
         onDelete={handleBulkDelete}
         onTotalsCalculated={(calculatedTotals) => setTotals(calculatedTotals)}
         userID={userID}
+        isAdmin={isAdmin}
       />
       <TableContainer >
 
@@ -357,6 +359,7 @@ const TableWithFilters = ({
                         onEdit={() => handleEdit(row[idField])}
                         onDelete={() => handleDelete(row[idField])}
                         onApprove={() => handleApprove(row[idField])}
+                        isAdmin={isAdmin}
                       />
 
                     </TableCell>
