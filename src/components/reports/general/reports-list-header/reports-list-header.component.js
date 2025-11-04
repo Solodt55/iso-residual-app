@@ -125,7 +125,7 @@ const ReportsListHeader = ({
                 />
 
                 {
-                    reportType === 'agent' &&  userID === '' && (
+                    decodedToken && decodedToken.isAdmin && reportType === 'agent' && userID === '' && (
                         <div className="w-64">
                             <Select
                                 options={(uniqueFirstNames || []).map(name => ({

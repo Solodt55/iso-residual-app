@@ -318,7 +318,7 @@ const AgentReportViewer = ({
                 setHasChanges={setHasChanges}
                 hasChanges={hasChanges}
                 editDialogProps={editDialogProps}
-                type="report"
+                type="agent-report"
                 userID={userID}
                 isAdmin={isAdmin}
             />

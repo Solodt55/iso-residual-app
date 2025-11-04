@@ -290,7 +290,7 @@ const TableWithFilters = ({
         onDelete={handleBulkDelete}
         onTotalsCalculated={(calculatedTotals) => setTotals(calculatedTotals)}
         userID={userID}
-        isAdmin={isAdmin}
+        {...(type === 'agent-report' ? { isAdmin } : {})}
       />
       <TableContainer >
 
