@@ -115,7 +115,7 @@ const AddAgent = ({organizationID, authToken}) => {
     };
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_ISO_BACKEND_URL}/v2/agents/organizations/${organizationID}`, {
+      const res = await fetch(`${process.env.REACT_APP_DEV_URL}/api/v2/agents/organizations/${organizationID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
